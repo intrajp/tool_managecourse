@@ -39,6 +39,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         $coursecount = $DB->count_records('course', array());
 
         return $coursecount;
+
     }
 
     public function get_course_count_time($time1, $time2) {
@@ -48,9 +49,21 @@ class tool_managecourse_renderer extends plugin_renderer_base {
             ' AND timecreated >= ' . $time2, array());
 
         return $coursecounttime->c;
+
+    }
+
+
+    public function get_course_names() {
+
+        global $DB;
+	$names = $DB->get_records('course', array());
+
+        return $names;
+
     }
 
     public function show_table() {
+
         global $CFG;
         $data = array();
         $table = new html_table();
@@ -83,8 +96,36 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         $data[] = $row_top;
         $data[] = $row;
         $table->data = $data;
-
-        return html_writer::table($table);
+        $perpage = 1;
+        return html_writer::table($table, array('sort' => 'location', 'dir' => 'ASC','perpage' => $perpage));
 
     }
+
+    public function show_table2($page, $perpage) {
+
+        global $DB;
+        $table = new html_table();
+        $table->head = [
+            get_string('fullname', 'tool_managecourse'),
+            get_string('timecreated', 'tool_managecourse'),
+        ];
+        $table->id = 'courses';
+        $table->attributes['class'] = 'admintable generaltable';
+        $table->data  = array();
+
+        $sql = "SELECT * from {course} ORDER BY timecreated DESC";
+
+        $rs = $DB->get_recordset_sql($sql, array(), $page*$perpage, $perpage);
+        foreach ($rs as $c) {
+            $row = array();
+            $row[] = $c->fullname;
+            $row[] = date('Y/m/d H:i:s', $c->timecreated);
+
+            $table->data[] = $row;
+        }
+        $rs->close();
+
+        return html_writer::table($table);
+    }
+
 }

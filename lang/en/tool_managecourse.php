@@ -28,3 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['pluginname'] = 'managecourse';
 $string['managecourse'] = 'Manage course in many ways';
 $string['coursescount'] = 'Courses count (in time)';
+$string['coursesname'] = 'Course Name';
+$string['id'] = 'id';
+$string['timecreated'] = 'timecreated';
+$string['fullname'] = 'fullname';

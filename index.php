@@ -39,4 +39,48 @@ $renderer = $PAGE->get_renderer('tool_managecourse');
 
 echo $OUTPUT->header();
 echo $renderer->show_table();
+
+// page parameters
+$page    = optional_param('page', 0, PARAM_INT);
+$perpage = optional_param('perpage', 20, PARAM_INT);    // how many per page
+$sort    = optional_param('sort', 'timecreated', PARAM_ALPHA);
+$dir     = optional_param('dir', 'DESC', PARAM_ALPHA);
+
+$coursescount = $DB->count_records('course');
+
+$columns = array('id'    => get_string('id', 'tool_managecourse'),
+                 'timemodified' => get_string('timecreated', 'tool_managecourse'),
+                );
+$hcolumns = array();
+
+if (!isset($columns[$sort])) {
+    $sort = 'timecreated';
+}
+
+foreach ($columns as $column=>$strcolumn) {
+    if ($sort != $column) {
+        $columnicon = '';
+        if ($column == 'lastaccess') {
+            $columndir = 'DESC';
+        } else {
+            $columndir = 'ASC';
+        }
+    } else {
+        $columndir = $dir == 'ASC' ? 'DESC':'ASC';
+        if ($column == 'lastaccess') {
+            $columnicon = $dir == 'ASC' ? 'up':'down';
+        } else {
+            $columnicon = $dir == 'ASC' ? 'down':'up';
+        }
+        $columnicon = $OUTPUT->pix_icon('t/' . $columnicon, '');
+
+    }
+    $hcolumns[$column] = "<a href=\"index.php?sort=$column&amp;dir=$columndir&amp;page=$page&amp;perpage=$perpage\">".$strcolumn."</a>$columnicon";
+}
+
+$baseurl = new moodle_url('index.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
+
+echo $OUTPUT->paging_bar($coursescount, $page, $perpage, $baseurl);
+echo $renderer->show_table2($page, $perpage);
+
 echo $OUTPUT->footer();

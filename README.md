@@ -2,8 +2,9 @@
 
 Features
 --------
-- Render courses count all. 
-- Render courses count in recent (hour, day, week, month). 
+- Render courses count. 
+- Render courses count in hour, day, week and month. 
+- Render course names order by timecreated DESC 20 perpage. 
 
 TODO
 --------
