@@ -40,7 +40,16 @@ class tool_managecourse_renderer extends plugin_renderer_base {
 
         return $coursecount;
     }
-    
+
+    public function get_course_count_time($time1, $time2) {
+
+        global $DB;
+	$coursecounttime = $DB->get_record_sql('SELECT count(id) as c from {course} WHERE timecreated <= ' . $time1 .
+            ' AND timecreated >= ' . $time2, array());
+
+        return $coursecounttime->c;
+    }
+
     public function show_table() {
         global $CFG;
         $data = array();
@@ -50,10 +59,28 @@ class tool_managecourse_renderer extends plugin_renderer_base {
             get_string('coursescount', 'tool_managecourse'),
         ];
 
-        $row = new html_table_row(array(
-            new html_table_cell($this->get_course_count())
+        $row_top = new html_table_row(array(
+            new html_table_cell("all"),
+            new html_table_cell("hour"),
+            new html_table_cell("day"),
+            new html_table_cell("week"),
+            new html_table_cell("month"),
         ));
 
+        $time_now = time();
+        $time_hour = $time_now - 3600;
+        $time_day = $time_now - 86400;
+        $time_week = $time_now - 604800;
+        $time_month = $time_now - 18144000;
+        $row = new html_table_row(array(
+            new html_table_cell($this->get_course_count()),
+            new html_table_cell($this->get_course_count_time($time_now, $time_hour)),
+            new html_table_cell($this->get_course_count_time($time_now, $time_day)),
+            new html_table_cell($this->get_course_count_time($time_now, $time_week)),
+            new html_table_cell($this->get_course_count_time($time_now, $time_month)),
+        ));
+
+        $data[] = $row_top;
         $data[] = $row;
         $table->data = $data;
 

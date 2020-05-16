@@ -1,16 +1,13 @@
 # managecourse #
 
-Moodle plugin managing course in many ways.
-
-version 0.1.0
-
 Features
 --------
-- Render courses count. 
+- Render courses count all. 
+- Render courses count in recent (hour, day, week, month). 
 
 TODO
 --------
-- Implement useful features concerning course for admins.
+- Implement useful features conserning course for admins.
 
 ## License ##
 

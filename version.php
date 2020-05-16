@@ -18,7 +18,7 @@
  * Plugin version and other meta-data are defined here.
  *
  * @package     tool_managecourse
- * @copyright   2020 Shintaro Fujiwara <shintaro dot fujiwara at gmail dot com>
+ * @copyright   2020 Shintaro Fujiwara <shintaro.fujiwara@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -26,6 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'tool_managecourse';
 $plugin->release = '0.1.0';
-$plugin->version = 2020051000;
+$plugin->version = 2020051600;
 $plugin->requires = 2018051700;
 $plugin->maturity = MATURITY_ALPHA;
