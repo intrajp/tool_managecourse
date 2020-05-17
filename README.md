@@ -4,7 +4,8 @@ Features
 --------
 - Render courses count. 
 - Render courses count in hour, day, week and month. 
-- Render course names order by timecreated DESC 20 perpage. 
+- Render course names order by timecreated DESC. 
+- Render course file size order by DESC. 
 
 TODO
 --------

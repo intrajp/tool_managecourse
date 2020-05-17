@@ -34,7 +34,7 @@ $PAGE->set_url($url);
 $PAGE->set_title(get_string('managecourse', 'tool_managecourse'));
 $PAGE->set_heading(get_string('managecourse', 'tool_managecourse'));
 
-$returnurl = new moodle_url('/admin/tool/managecourse/index.php');
+$returnurl = new moodle_url('/admin/tool/managecourse/index2.php');
 $renderer = $PAGE->get_renderer('tool_managecourse');
 
 echo $OUTPUT->header();
@@ -45,8 +45,6 @@ $page    = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', 20, PARAM_INT);    // how many per page
 $sort    = optional_param('sort', 'timecreated', PARAM_ALPHA);
 $dir     = optional_param('dir', 'DESC', PARAM_ALPHA);
-
-$coursescount = $DB->count_records('course');
 
 $columns = array('id'    => get_string('id', 'tool_managecourse'),
                  'timemodified' => get_string('timecreated', 'tool_managecourse'),
@@ -75,13 +73,20 @@ foreach ($columns as $column=>$strcolumn) {
         $columnicon = $OUTPUT->pix_icon('t/' . $columnicon, '');
 
     }
-    $hcolumns[$column] = "<a href=\"index.php?sort=$column&amp;dir=$columndir&amp;page=$page&amp;perpage=$perpage\">".$strcolumn."</a>$columnicon";
+    $hcolumns[$column] = "<a href=\"index2.php?sort=$column&amp;dir=$columndir&amp;page=$page&amp;perpage=$perpage\">".$strcolumn."</a>$columnicon";
 }
 
-$baseurl = new moodle_url('index.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
-echo $OUTPUT->paging_bar($coursescount, $page, $perpage, $baseurl);
-echo $renderer->show_table2($page, $perpage);
+$baseurl = new moodle_url('index2.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
 
-echo "<a href=\"index2.php\">course file size</a>";
+// COMPONENT: backup, course, question
+$component="f.component = \"course\"";
+// CONTEXTLEVEL: system:10, user:30, coursecat:40, corse:50, module:70, block:80
+$contextlevel = "x.contextlevel = 50";
+
+$coursescount = $renderer->show_table3_count($page, $perpage, $component, $contextlevel);
+echo $OUTPUT->paging_bar($coursescount, $page, $perpage, $baseurl);
+echo $renderer->show_table3($page, $perpage, $component, $contextlevel);
+
+echo "<a href=\"index.php\">back to index</a>";
 
 echo $OUTPUT->footer();
