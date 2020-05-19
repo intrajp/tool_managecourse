@@ -79,9 +79,10 @@ foreach ($columns as $column=>$strcolumn) {
 }
 
 $baseurl = new moodle_url('index.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
-echo $OUTPUT->paging_bar($coursescount, $page, $perpage, $baseurl);
+echo "Showing courses which has editingteacher role.";
+echo $OUTPUT->paging_bar($renderer->show_table2_count(), $page, $perpage, $baseurl);
 echo $renderer->show_table2($page, $perpage);
 
-echo "<a href=\"index2.php\">course file size</a>";
+echo "<a href=\"course_file_size.php\">course file size</a>";
 
 echo $OUTPUT->footer();

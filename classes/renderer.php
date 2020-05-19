@@ -101,6 +101,28 @@ class tool_managecourse_renderer extends plugin_renderer_base {
 
     }
 
+    public function show_table2_count() {
+
+        global $DB;
+        $VIEW_COLUMNS = "c.id as courseid, c.fullname, c.timecreated, u.lastname, u.firstname, r.shortname as roleshortname";
+        $FROM_TABLES = "FROM mdl_user_enrolments m, mdl_role_assignments a, mdl_user u, mdl_enrol e, mdl_course c, mdl_role r";
+        $BIND1 = "m.enrolid = e.id";
+        $BIND2 = "a.roleid = r.id";
+        $BIND3 = "a.userid = u.id";
+        $BIND4 = "m.userid = u.id";
+        $BIND5 = "e.courseid = c.id";
+        $GROUP_BY = "GROUP BY c.id,a.roleid";
+        $DESC = "DESC";
+        $ASC = "ASC";
+        $sql = "select ${VIEW_COLUMNS} ${FROM_TABLES}  where ${BIND1} and ${BIND2} and ${BIND3} and ${BIND4} and ${BIND5} and (a.roleid = 3) 
+                ${GROUP_BY} order by c.timecreated $DESC, c.id $ASC";
+
+        $records = $DB->get_records_sql($sql, array());
+        $counts = count($records);
+	return $counts;
+
+    }
+
     public function show_table2($page, $perpage) {
 
         global $DB;
@@ -126,7 +148,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         $GROUP_BY = "GROUP BY c.id,a.roleid";
         $DESC = "DESC";
         $ASC = "ASC";
-        $sql = "select ${VIEW_COLUMNS} ${FROM_TABLES}  where ${BIND1} and ${BIND2} and ${BIND3} and ${BIND4} and ${BIND5} and (a.roleid <= 3) 
+        $sql = "select ${VIEW_COLUMNS} ${FROM_TABLES}  where ${BIND1} and ${BIND2} and ${BIND3} and ${BIND4} and ${BIND5} and (a.roleid = 3) 
                 ${GROUP_BY} order by c.timecreated $DESC, c.id $ASC";
 
         $rs = $DB->get_recordset_sql($sql, array(), $page*$perpage, $perpage);
@@ -162,7 +184,6 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         $table->attributes['class'] = 'admintable generaltable';
         $table->data  = array();
 
-        // Alert, first column should be unique with get_records_sql.
         $VIEW_COLUMNS = "x.instanceid, f.component, x.contextlevel, u.firstname, u.lastname, c.fullname, c.shortname, f.timecreated, f.timemodified,
                         sum(f.filesize) as size_in_bytes, sum(f.filesize/1024) as size_in_kbytes, sum(f.filesize/1048576) as size_in_mbytes,
                         sum(f.filesize/1073741824) as size_in_gbytes, sum(case when (f.filesize > 0) then 1 else 0 end) as number_of_files";

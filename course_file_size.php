@@ -34,7 +34,7 @@ $PAGE->set_url($url);
 $PAGE->set_title(get_string('managecourse', 'tool_managecourse'));
 $PAGE->set_heading(get_string('managecourse', 'tool_managecourse'));
 
-$returnurl = new moodle_url('/admin/tool/managecourse/index2.php');
+$returnurl = new moodle_url('/admin/tool/managecourse/course_file_size.php');
 $renderer = $PAGE->get_renderer('tool_managecourse');
 
 echo $OUTPUT->header();
@@ -47,7 +47,7 @@ $sort    = optional_param('sort', 'timecreated', PARAM_ALPHA);
 $dir     = optional_param('dir', 'DESC', PARAM_ALPHA);
 
 $columns = array('id'    => get_string('id', 'tool_managecourse'),
-                 'timemodified' => get_string('timecreated', 'tool_managecourse'),
+                 'timecreated' => get_string('timecreated', 'tool_managecourse'),
                 );
 $hcolumns = array();
 
@@ -73,10 +73,10 @@ foreach ($columns as $column=>$strcolumn) {
         $columnicon = $OUTPUT->pix_icon('t/' . $columnicon, '');
 
     }
-    $hcolumns[$column] = "<a href=\"index2.php?sort=$column&amp;dir=$columndir&amp;page=$page&amp;perpage=$perpage\">".$strcolumn."</a>$columnicon";
+    $hcolumns[$column] = "<a href=\"course_file_size.php?sort=$column&amp;dir=$columndir&amp;page=$page&amp;perpage=$perpage\">".$strcolumn."</a>$columnicon";
 }
 
-$baseurl = new moodle_url('index2.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
+$baseurl = new moodle_url('course_file_size.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
 
 // COMPONENT: backup, course, question
 $component="f.component = \"course\"";
