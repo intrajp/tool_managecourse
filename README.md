@@ -4,8 +4,7 @@ Features
 --------
 - Render courses count. 
 - Render courses count in hour, day, week and month. 
-- Render course names which has manager, coursecreator, editingteacher, teacher student,
-guest, user, fromtpage role order by timecreated DESC. 
+- Render course names which has manager, coursecreator, editingteacher, teacher role order by timecreated DESC.
 - Render course file size order by DESC. 
 
 TODO
