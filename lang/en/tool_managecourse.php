@@ -32,6 +32,7 @@ $string['coursesname'] = 'Course Name';
 $string['id'] = 'id';
 $string['timecreated'] = 'timecreated';
 $string['fullname'] = 'fullname';
+$string['categoryname'] = 'categoryname';
 $string['sizeinkbytes'] = 'KBytes';
 $string['sizeinmbytes'] = 'MBytes';
 $string['username'] = 'username';

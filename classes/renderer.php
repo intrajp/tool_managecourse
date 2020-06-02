@@ -128,6 +128,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         global $DB;
         $table = new html_table();
         $table->head = [
+            get_string('categoryname', 'tool_managecourse'),
             get_string('fullname', 'tool_managecourse'),
             get_string('firstname', 'tool_managecourse'),
             get_string('lastname', 'tool_managecourse'),
@@ -138,22 +139,24 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         $table->attributes['class'] = 'admintable generaltable';
         $table->data  = array();
 
-        $VIEW_COLUMNS = "distinct c.id as courseid, c.fullname, c.timecreated, u.lastname, u.firstname, r.shortname as roleshortname";
-        $FROM_TABLES = "FROM mdl_user_enrolments m, mdl_role_assignments a, mdl_user u, mdl_enrol e, mdl_course c, mdl_role r";
+        $VIEW_COLUMNS = "distinct c.id as courseid, k.name as categoryname, c.fullname, c.timecreated, u.lastname, u.firstname, r.shortname as roleshortname";
+        $FROM_TABLES = "FROM mdl_user_enrolments m, mdl_role_assignments a, mdl_user u, mdl_enrol e, mdl_course c, mdl_role r, mdl_course_categories k";
         $BIND1 = "m.enrolid = e.id";
         $BIND2 = "a.roleid = r.id";
         $BIND3 = "a.userid = u.id";
         $BIND4 = "m.userid = u.id";
         $BIND5 = "e.courseid = c.id";
+        $BIND6 = "c.category = k.id";
         $GROUP_BY = "GROUP BY c.id,a.roleid";
         $DESC = "DESC";
         $ASC = "ASC";
-        $sql = "select ${VIEW_COLUMNS} ${FROM_TABLES}  where ${BIND1} and ${BIND2} and ${BIND3} and ${BIND4} and ${BIND5} and (a.roleid = 3) 
+        $sql = "select ${VIEW_COLUMNS} ${FROM_TABLES}  where ${BIND1} and ${BIND2} and ${BIND3} and ${BIND4} and ${BIND5} and ${BIND6} and (a.roleid = 3) 
                 ${GROUP_BY} order by c.timecreated $DESC, c.id $ASC";
 
         $rs = $DB->get_recordset_sql($sql, array(), $page*$perpage, $perpage);
         foreach ($rs as $c) {
             $row = array();
+            $row[] = $c->categoryname;
             $row[] = $c->fullname;
             $row[] = $c->firstname;
             $row[] = $c->lastname;
