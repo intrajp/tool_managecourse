@@ -101,6 +101,11 @@ class tool_managecourse_renderer extends plugin_renderer_base {
 
     }
 
+    public function show_table2_sql_count() {
+
+        $sql = "select c.id FROM mdl_course c, mdl_role r, mdl_enrol e, mdl_role_assignments a WHERE e.courseid = c.id AND a.roleid = r.id"; 
+    }
+
     public function show_table2_sql() {
 
         $VIEW_COLUMNS = "distinct c.id as courseid, k.name as categoryname, c.fullname, c.timecreated, u.lastname, u.firstname, r.shortname as roleshortname";
@@ -114,8 +119,8 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         $GROUP_BY = "GROUP BY c.id,a.roleid";
         $DESC = "DESC";
         $ASC = "ASC";
-        $sql = "select ${VIEW_COLUMNS} ${FROM_TABLES}  where ${BIND1} and ${BIND2} and ${BIND3} and ${BIND4} and ${BIND5} and ${BIND6} and (a.roleid <= 4) 
-                ${GROUP_BY} order by c.timecreated $DESC, c.id $ASC";
+        $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES}  WHERE ${BIND1} AND ${BIND2} AND ${BIND3} AND ${BIND4} AND ${BIND5} AND ${BIND6} AND (a.roleid <= 4) 
+                ${GROUP_BY} ORDER BY  c.timecreated $DESC, c.id $ASC";
 
         return $sql;
     }
@@ -124,7 +129,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
 
         global $DB;
 
-        $records = $DB->get_records_sql($this->show_table2_sql(), array());
+        $records = $DB->get_records_sql($this->show_table2_sql_count(), array());
         $counts = count($records);
 	return $counts;
 
@@ -184,7 +189,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         //Uncomment if you want to echo date string  
         $FORMAT = $FORMAT_NORMAL;
         //sql (you can tweek order with above variable)
-        $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} WHERE ${BIND1} and ${component} and ${contextlevel} and ${BIND2} and ${BIND3} ${GROUP_BY} 
+        $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} WHERE ${BIND1} AND ${component} AND ${contextlevel} AND ${BIND2} AND ${BIND3} ${GROUP_BY} 
                 ORDER BY ${ORDER_FILESIZE} ${DESC}, ${ORDER_TIMECREATED} ${DESC}";
 
         return $sql;
