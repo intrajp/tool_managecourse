@@ -104,6 +104,9 @@ class tool_managecourse_renderer extends plugin_renderer_base {
     public function show_table2_sql_count() {
 
         $sql = "select c.id FROM mdl_course c, mdl_role r, mdl_enrol e, mdl_role_assignments a WHERE e.courseid = c.id AND a.roleid = r.id"; 
+
+        return $sql;
+
     }
 
     public function show_table2_sql() {
