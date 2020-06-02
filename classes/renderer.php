@@ -101,10 +101,9 @@ class tool_managecourse_renderer extends plugin_renderer_base {
 
     }
 
-    public function show_table2_count() {
+    public function show_table2_sql() {
 
-        global $DB;
-        $VIEW_COLUMNS = "c.id as courseid, c.fullname, c.timecreated, u.lastname, u.firstname, r.shortname as roleshortname";
+        $VIEW_COLUMNS = "distinct c.id as courseid, k.name as categoryname, c.fullname, c.timecreated, u.lastname, u.firstname, r.shortname as roleshortname";
         $FROM_TABLES = "FROM mdl_user_enrolments m, mdl_role_assignments a, mdl_user u, mdl_enrol e, mdl_course c, mdl_role r, mdl_course_categories k";
         $BIND1 = "m.enrolid = e.id";
         $BIND2 = "a.roleid = r.id";
@@ -115,10 +114,17 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         $GROUP_BY = "GROUP BY c.id,a.roleid";
         $DESC = "DESC";
         $ASC = "ASC";
-        $sql = "select ${VIEW_COLUMNS} ${FROM_TABLES}  where ${BIND1} and ${BIND2} and ${BIND3} and ${BIND4} and ${BIND5} and (a.roleid <= 4) 
+        $sql = "select ${VIEW_COLUMNS} ${FROM_TABLES}  where ${BIND1} and ${BIND2} and ${BIND3} and ${BIND4} and ${BIND5} and ${BIND6} and (a.roleid <= 4) 
                 ${GROUP_BY} order by c.timecreated $DESC, c.id $ASC";
 
-        $records = $DB->get_records_sql($sql, array());
+        return $sql;
+    }
+
+    public function show_table2_count() {
+
+        global $DB;
+
+        $records = $DB->get_records_sql($this->show_table2_sql(), array());
         $counts = count($records);
 	return $counts;
 
@@ -140,21 +146,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         $table->attributes['class'] = 'admintable generaltable';
         $table->data  = array();
 
-        $VIEW_COLUMNS = "distinct c.id as courseid, k.name as categoryname, c.fullname, c.timecreated, u.lastname, u.firstname, r.shortname as roleshortname";
-        $FROM_TABLES = "FROM mdl_user_enrolments m, mdl_role_assignments a, mdl_user u, mdl_enrol e, mdl_course c, mdl_role r, mdl_course_categories k";
-        $BIND1 = "m.enrolid = e.id";
-        $BIND2 = "a.roleid = r.id";
-        $BIND3 = "a.userid = u.id";
-        $BIND4 = "m.userid = u.id";
-        $BIND5 = "e.courseid = c.id";
-        $BIND6 = "c.category = k.id";
-        $GROUP_BY = "GROUP BY c.id,a.roleid";
-        $DESC = "DESC";
-        $ASC = "ASC";
-        $sql = "select ${VIEW_COLUMNS} ${FROM_TABLES}  where ${BIND1} and ${BIND2} and ${BIND3} and ${BIND4} and ${BIND5} and ${BIND6} and (a.roleid <= 4) 
-                ${GROUP_BY} order by c.timecreated $DESC, c.id $ASC";
-
-        $rs = $DB->get_recordset_sql($sql, array(), $page*$perpage, $perpage);
+        $rs = $DB->get_recordset_sql($this->show_table2_sql(), array(), $page*$perpage, $perpage);
         foreach ($rs as $c) {
             $row = array();
             $row[] = $c->categoryname;
@@ -171,23 +163,9 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         return html_writer::table($table);
     }
 
-    public function show_table3($page, $perpage, $component, $contextlevel) {
+    public function show_table3_sql($component, $contextlevel) {
 
-        global $CFG;
-        global $DB;
-        $data = array();
-        $table = new html_table();
-        $table->head = [
-            get_string('fullname', 'tool_managecourse'),
-            get_string('sizeinkbytes', 'tool_managecourse'),
-            get_string('sizeinmbytes', 'tool_managecourse'),
-            get_string('firstname', 'tool_managecourse'),
-            get_string('lastname', 'tool_managecourse'),
-        ];
-        $table->id = 'courses';
-        $table->attributes['class'] = 'admintable generaltable';
-        $table->data  = array();
-
+        // Alert, first column should be unique with get_records_sql.
         $VIEW_COLUMNS = "x.instanceid, f.component, x.contextlevel, u.firstname, u.lastname, c.fullname, c.shortname, f.timecreated, f.timemodified,
                         sum(f.filesize) as size_in_bytes, sum(f.filesize/1024) as size_in_kbytes, sum(f.filesize/1048576) as size_in_mbytes,
                         sum(f.filesize/1073741824) as size_in_gbytes, sum(case when (f.filesize > 0) then 1 else 0 end) as number_of_files";
@@ -208,7 +186,29 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         //sql (you can tweek order with above variable)
         $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} WHERE ${BIND1} and ${component} and ${contextlevel} and ${BIND2} and ${BIND3} ${GROUP_BY} 
                 ORDER BY ${ORDER_FILESIZE} ${DESC}, ${ORDER_TIMECREATED} ${DESC}";
-        $rs = $DB->get_recordset_sql($sql, array(), $page*$perpage, $perpage);
+
+        return $sql;
+
+    }
+
+    public function show_table3($page, $perpage, $component, $contextlevel) {
+
+        global $CFG;
+        global $DB;
+        $data = array();
+        $table = new html_table();
+        $table->head = [
+            get_string('fullname', 'tool_managecourse'),
+            get_string('sizeinkbytes', 'tool_managecourse'),
+            get_string('sizeinmbytes', 'tool_managecourse'),
+            get_string('firstname', 'tool_managecourse'),
+            get_string('lastname', 'tool_managecourse'),
+        ];
+        $table->id = 'courses';
+        $table->attributes['class'] = 'admintable generaltable';
+        $table->data  = array();
+
+        $rs = $DB->get_recordset_sql($this->show_table3_sql($component, $contextlevel), array(), $page*$perpage, $perpage);
         foreach ($rs as $c) {
             $row = array();
             $row[] = $c->fullname;
@@ -227,24 +227,10 @@ class tool_managecourse_renderer extends plugin_renderer_base {
     public function show_table3_count($page, $perpage, $component, $contextlevel) {
 
         global $DB;
-        // Alert, first column should be unique with get_records_sql.
-        $VIEW_COLUMNS = "x.instanceid, f.component, x.contextlevel, x.instanceid, u.username,c.fullname, c.shortname, f.timecreated,
-                        f.timemodified, sum(f.filesize) as size_in_bytes, sum(case when (f.filesize > 0) then 1 else 0 end) as number_of_files";
-        $FROM_TABLES = "FROM mdl_files f, mdl_course c, mdl_context x, mdl_user u";
-        $BIND1 = "f.contextid = x.id";
-        $BIND2 = "c.id = x.instanceid";
-        $BIND3 = "u.id = f.userid";
-        $GROUP_BY = "GROUP BY f.contextid, x.instanceid";
-        $ORDER_FILESIZE = "sum(f.filesize)";
-        $ORDER_TIMECREATED = "f.timecreated";
-        $ORDER_MODIFIED = "f.timemodified";
-        $DESC = "DESC";
-        $ASC = "ASC";
-        //sql (you can tweek order with above variable)
-        $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} WHERE ${BIND1} and ${component} and ${contextlevel} and ${BIND2} and ${BIND3} ${GROUP_BY} 
-                ORDER BY ${ORDER_TIMECREATED} ${DESC}, ${ORDER_FILESIZE} ${ASC}";
-        $records = $DB->get_records_sql($sql, array());
+
+        $records = $DB->get_records_sql($this->show_table3_sql($component, $contextlevel), array());
         $counts = count($records);
+
 	return $counts;
     }
 
