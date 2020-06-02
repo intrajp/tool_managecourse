@@ -79,7 +79,7 @@ foreach ($columns as $column=>$strcolumn) {
 }
 
 $baseurl = new moodle_url('index.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
-echo "Showing ".$renderer->show_table2_count()." courses which has manager, coursecreator, editingteacher, teacher, student, guest, user and frontpage role.";
+echo "Showing ".$renderer->show_table2_count()." courses which has manager, coursecreator, editingteacher or teacher role.";
 echo $OUTPUT->paging_bar($renderer->show_table2_count(), $page, $perpage, $baseurl);
 echo $renderer->show_table2($page, $perpage);
 
