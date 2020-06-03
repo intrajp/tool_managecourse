@@ -132,9 +132,24 @@ class tool_managecourse_renderer extends plugin_renderer_base {
 
         global $DB;
 
-        $records = $DB->get_records_sql($this->show_table2_sql_count(), array());
+        $records = $DB->get_records_sql($this->show_table2_sql(), array());
         $counts = count($records);
 	return $counts;
+
+    }
+
+    public function show_table2_count_redundant() {
+
+        global $DB;
+
+        $rs = $DB->get_recordset_sql($this->show_table2_sql(), array());
+        $cnt=1;
+        foreach ($rs as $c) {
+            $cnt = $cnt + 1;
+        }
+        $rs->close();
+
+	return $cnt;
 
     }
 
