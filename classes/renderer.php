@@ -119,11 +119,13 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         $BIND4 = "m.userid = u.id";
         $BIND5 = "e.courseid = c.id";
         $BIND6 = "c.category = k.id";
-        $GROUP_BY = "GROUP BY c.id,a.roleid";
+        $GROUP_BY = "GROUP BY c.id,a.roleid, r.id";
         $DESC = "DESC";
         $ASC = "ASC";
+        $ORDER_BY = "ORDER BY c.timecreated $DESC, c.id $ASC, r.id $ASC";
+
         $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES}  WHERE ${BIND1} AND ${BIND2} AND ${BIND3} AND ${BIND4} AND ${BIND5} AND ${BIND6} AND (a.roleid <= 4) 
-                ${GROUP_BY} ORDER BY  c.timecreated $DESC, c.id $ASC";
+                ${GROUP_BY} ${ORDER_BY}";
 
         return $sql;
     }
@@ -170,16 +172,29 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         $table->data  = array();
 
         $rs = $DB->get_recordset_sql($this->show_table2_sql(), array(), $page*$perpage, $perpage);
+        $count = 0;
         foreach ($rs as $c) {
-            $row = array();
-            $row[] = $c->categoryname;
-            $row[] = $c->fullname;
-            $row[] = $c->firstname;
-            $row[] = $c->lastname;
-            $row[] = $c->roleshortname;
-            $row[] = date('Y/m/d H:i:s', $c->timecreated);
+            if ($c->timecreated == $timecreated_pre && strcmp($c->fullname, $fullname_pre) == 0
+                   && strcmp($c->firstname, $firstname_pre) == 0 && strcmp($c->lastname, $lastname_pre) == 0
+                   && strcmp($c->roleshortname, $roleshortname_pre) != 0) {
+                continue; 
+            } else {
+                $row = array();
+                $row[] = $c->categoryname;
+                $row[] = $c->fullname;
+                $row[] = $c->firstname;
+                $row[] = $c->lastname;
+                $row[] = $c->roleshortname;
+                $row[] = date('Y/m/d H:i:s', $c->timecreated);
+                $table->data[] = $row;
+            }
 
-            $table->data[] = $row;
+            $timecreated_pre = $c->timecreated;
+            $fullname_pre = $c->fullname;
+            $firstname_pre = $c->firstname;
+            $lastname_pre = $c->lastname;
+            $roleshortname_pre = $c->roleshortname;
+            $count = $count + 1;
         }
         $rs->close();
 
