@@ -103,7 +103,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
 
     public function show_table2_sql_count() {
 
-        $sql = "select c.id FROM mdl_course c, mdl_role r, mdl_enrol e, mdl_role_assignments a WHERE e.courseid = c.id AND a.roleid = r.id"; 
+        $sql = "select c.id FROM {course} c, {role} r, {enrol} e, {role_assignments} a WHERE e.courseid = c.id AND a.roleid = r.id"; 
 
         return $sql;
 
@@ -112,7 +112,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
     public function show_table2_sql() {
 
         $VIEW_COLUMNS = "c.id as courseid, k.name as categoryname, c.fullname, c.timecreated, u.lastname, u.firstname, r.shortname as roleshortname";
-        $FROM_TABLES = "FROM mdl_user_enrolments m, mdl_role_assignments a, mdl_user u, mdl_enrol e, mdl_course c, mdl_role r, mdl_course_categories k";
+        $FROM_TABLES = "FROM {user_enrolments} m, {role_assignments} a, {user} u, {enrol} e, {course} c, {role} r, {course_categories} k";
         $BIND1 = "m.enrolid = e.id";
         $BIND2 = "a.roleid = r.id";
         $BIND3 = "a.userid = u.id";
@@ -212,7 +212,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         $VIEW_COLUMNS = "x.instanceid, f.component, x.contextlevel, u.firstname, u.lastname, c.fullname, c.shortname, f.timecreated, f.timemodified,
                         sum(f.filesize) as size_in_bytes, sum(f.filesize/1024) as size_in_kbytes, sum(f.filesize/1048576) as size_in_mbytes,
                         sum(f.filesize/1073741824) as size_in_gbytes, sum(case when (f.filesize > 0) then 1 else 0 end) as number_of_files";
-        $FROM_TABLES = "FROM mdl_files f, mdl_course c, mdl_context x, mdl_user u";
+        $FROM_TABLES = "FROM {files} f, {course} c, {context} x, {user} u";
         $BIND1 = "f.contextid = x.id";
         $BIND2 = "c.id = x.instanceid";
         $BIND3 = "u.id = f.userid";
