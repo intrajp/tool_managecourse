@@ -134,8 +134,9 @@ class tool_managecourse_renderer extends plugin_renderer_base {
 
         global $DB;
 
-        $records = $DB->get_records_sql($this->show_table2_sql(), array());
-        $counts = count($records);
+        $rs = $DB->get_records_sql($this->show_table2_sql(), array());
+        $counts = count($rs);
+
 	return $counts;
 
     }
@@ -145,7 +146,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         global $DB;
 
         $rs = $DB->get_recordset_sql($this->show_table2_sql(), array());
-        $cnt=1;
+        $cnt=0;
         foreach ($rs as $c) {
             $cnt = $cnt + 1;
         }
@@ -175,25 +176,31 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         foreach ($rs as $c) {
             $row = array();
             if ($c->timecreated == $timecreated_pre && strcmp($c->fullname, $fullname_pre) == 0
-                   && strcmp($c->firstname, $firstname_pre) == 0 && strcmp($c->lastname, $lastname_pre) == 0
-                   && strcmp($c->roleshortname, $roleshortname_pre) != 0) {
-                continue; 
+                    && strcmp($c->firstname, $firstname_pre) == 0 && strcmp($c->lastname, $lastname_pre) == 0
+                    && strcmp($c->roleshortname, $roleshortname_pre) != 0) {
+                    $row[] = "\"";
+                    $row[] = "\"";
+                    $row[] = "\"";
+                    $row[] = "\"";
+                    $row[] = $c->roleshortname;
+                    $row[] = "\"";
             } else {
-                $row = array();
                 $row[] = $c->categoryname;
                 $row[] = $c->fullname;
                 $row[] = $c->firstname;
                 $row[] = $c->lastname;
                 $row[] = $c->roleshortname;
                 $row[] = date('Y/m/d H:i:s', $c->timecreated);
-                $table->data[] = $row;
             }
             $timecreated_pre = $c->timecreated;
             $fullname_pre = $c->fullname;
             $firstname_pre = $c->firstname;
             $lastname_pre = $c->lastname;
             $roleshortname_pre = $c->roleshortname;
+
+            $table->data[] = $row;
         }
+
         $rs->close();
 
         return html_writer::table($table);
