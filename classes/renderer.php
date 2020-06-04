@@ -171,7 +171,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         $table->attributes['class'] = 'admintable generaltable';
         $table->data = array();
 
-        $rs = $DB->get_recordset_sql($this->show_table2_sql(), array());
+        $rs = $DB->get_recordset_sql($this->show_table2_sql(), array(), $page*$perpage, $perpage);
         foreach ($rs as $c) {
             $row = array();
             if ($c->timecreated == $timecreated_pre && strcmp($c->fullname, $fullname_pre) == 0
