@@ -81,7 +81,7 @@ foreach ($columns as $column=>$strcolumn) {
 $baseurl = new moodle_url('index.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
 $count2_actual = $renderer->show_table2_count();
 $count2_redundant = $renderer->show_table2_count_redundant();
-echo "Showing ".$count2_redundant." rudundant (".$count2_actual." courses which has enrol as manager, coursecreator, editingteacher or teacher role.";
+echo "Showing ".$count2_redundant." rudundant (".$count2_actual." actual) courses which has enrol as manager, coursecreator, editingteacher or teacher role.";
 echo $OUTPUT->paging_bar($count2_redundant, $page, $perpage, $baseurl);
 echo $renderer->show_table2($page, $perpage);
 
