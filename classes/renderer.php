@@ -111,7 +111,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
 
     public function show_table2_sql() {
 
-        $VIEW_COLUMNS = "distinct c.id as courseid, k.name as categoryname, c.fullname, c.timecreated, u.lastname, u.firstname, r.shortname as roleshortname";
+        $VIEW_COLUMNS = "c.id as courseid, k.name as categoryname, c.fullname, c.timecreated, u.lastname, u.firstname, r.shortname as roleshortname";
         $FROM_TABLES = "FROM mdl_user_enrolments m, mdl_role_assignments a, mdl_user u, mdl_enrol e, mdl_course c, mdl_role r, mdl_course_categories k";
         $BIND1 = "m.enrolid = e.id";
         $BIND2 = "a.roleid = r.id";
@@ -169,11 +169,11 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         ];
         $table->id = 'courses';
         $table->attributes['class'] = 'admintable generaltable';
-        $table->data  = array();
+        $table->data = array();
 
-        $rs = $DB->get_recordset_sql($this->show_table2_sql(), array(), $page*$perpage, $perpage);
-        $count = 0;
+        $rs = $DB->get_recordset_sql($this->show_table2_sql(), array());
         foreach ($rs as $c) {
+            $row = array();
             if ($c->timecreated == $timecreated_pre && strcmp($c->fullname, $fullname_pre) == 0
                    && strcmp($c->firstname, $firstname_pre) == 0 && strcmp($c->lastname, $lastname_pre) == 0
                    && strcmp($c->roleshortname, $roleshortname_pre) != 0) {
@@ -188,13 +188,11 @@ class tool_managecourse_renderer extends plugin_renderer_base {
                 $row[] = date('Y/m/d H:i:s', $c->timecreated);
                 $table->data[] = $row;
             }
-
             $timecreated_pre = $c->timecreated;
             $fullname_pre = $c->fullname;
             $firstname_pre = $c->firstname;
             $lastname_pre = $c->lastname;
             $roleshortname_pre = $c->roleshortname;
-            $count = $count + 1;
         }
         $rs->close();
 

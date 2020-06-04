@@ -79,10 +79,9 @@ foreach ($columns as $column=>$strcolumn) {
 }
 
 $baseurl = new moodle_url('index.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
-$count2_redundant = $renderer->show_table2_count_redundant();
 $count2_actual = $renderer->show_table2_count();
 echo "Showing ".$count2_actual." courses which has manager, coursecreator, editingteacher or teacher role.";
-echo $OUTPUT->paging_bar($count2_redundant, $page, $perpage, $baseurl);
+echo $OUTPUT->paging_bar($count2_actual, $page, $perpage, $baseurl);
 echo $renderer->show_table2($page, $perpage);
 
 echo "<a href=\"course_file_size.php\">course file size</a>";
