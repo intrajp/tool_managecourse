@@ -28,6 +28,10 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/moodlelib.php');
 require_once($CFG->dirroot.'/admin/tool/managecourse/classes/renderer.php');
 
+if (isguestuser()) {
+    throw new require_login_exception('Guests are not allowed here.');
+}
+
 admin_externalpage_setup('tool_managecourse');
 $url = new moodle_url('/admin/tool/managecourse/index.php');
 $PAGE->set_url($url);

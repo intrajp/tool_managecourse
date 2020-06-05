@@ -38,7 +38,7 @@ $PAGE->set_url($url);
 $PAGE->set_title(get_string('managecourse', 'tool_managecourse'));
 $PAGE->set_heading(get_string('managecourse', 'tool_managecourse'));
 
-$returnurl = new moodle_url('/admin/tool/managecourse/index.php');
+$returnurl = new moodle_url('/admin/tool/managecourse/course_file_size.php');
 $renderer = $PAGE->get_renderer('tool_managecourse');
 
 echo $OUTPUT->header();
@@ -47,13 +47,11 @@ echo $renderer->show_table();
 // page parameters
 $page    = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', 20, PARAM_INT);    // how many per page
-$sort    = optional_param('sort', 'timecreated', PARAM_ALPHA);
+$sort    = optional_param('sort', 'userid', PARAM_ALPHA);
 $dir     = optional_param('dir', 'DESC', PARAM_ALPHA);
 
-$coursescount = $DB->count_records('course');
-
 $columns = array('id'    => get_string('id', 'tool_managecourse'),
-                 'timemodified' => get_string('timecreated', 'tool_managecourse'),
+                 'timecreated' => get_string('timecreated', 'tool_managecourse'),
                 );
 $hcolumns = array();
 
@@ -79,17 +77,15 @@ foreach ($columns as $column=>$strcolumn) {
         $columnicon = $OUTPUT->pix_icon('t/' . $columnicon, '');
 
     }
-    $hcolumns[$column] = "<a href=\"index.php?sort=$column&amp;dir=$columndir&amp;page=$page&amp;perpage=$perpage\">".$strcolumn."</a>$columnicon";
+    $hcolumns[$column] = "<a href=\"grade.php?sort=$column&amp;dir=$columndir&amp;page=$page&amp;perpage=$perpage\">".$strcolumn."</a>$columnicon";
 }
 
-$baseurl = new moodle_url('index.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
-$count2_actual = $renderer->show_table2_count();
-$count2_redundant = $renderer->show_table2_count_redundant();
-echo "Showing ".$count2_redundant." rudundant (".$count2_actual." actual) courses which has enrol as manager, coursecreator, editingteacher or teacher role.";
-echo $OUTPUT->paging_bar($count2_redundant, $page, $perpage, $baseurl);
-echo $renderer->show_table2($page, $perpage);
+$baseurl = new moodle_url('grade.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
 
-echo "<a href=\"course_file_size.php\">course file size</a>    ";
-echo "<a href=\"grade.php\">grades</a>";
+$gradecount = $renderer->show_grade_count($page, $perpage);
+echo $OUTPUT->paging_bar($gradecount, $page, $perpage, $baseurl);
+echo $renderer->show_grade_table1($page, $perpage);
+
+echo "<a href=\"index.php\">back to index</a>";
 
 echo $OUTPUT->footer();
