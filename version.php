@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'tool_managecourse';
-$plugin->release = '0.1.21';
-$plugin->version = 2020060512;
+$plugin->release = '0.1.22';
+$plugin->version = 2020060513;
 $plugin->requires = 2018051700;
 $plugin->maturity = MATURITY_ALPHA;
