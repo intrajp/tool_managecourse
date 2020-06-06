@@ -27,6 +27,7 @@ require(__DIR__.'/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/moodlelib.php');
 require_once($CFG->dirroot.'/admin/tool/managecourse/classes/renderer.php');
+require_once($CFG->dirroot.'/admin/tool/managecourse/classes/form.php');
 
 if (isguestuser()) {
     throw new require_login_exception('Guests are not allowed here.');
@@ -38,7 +39,6 @@ $PAGE->set_url($url);
 $PAGE->set_title(get_string('managecourse', 'tool_managecourse'));
 $PAGE->set_heading(get_string('managecourse', 'tool_managecourse'));
 
-$returnurl = new moodle_url('/admin/tool/managecourse/course_file_size.php');
 $renderer = $PAGE->get_renderer('tool_managecourse');
 
 echo $OUTPUT->header();
@@ -81,6 +81,9 @@ foreach ($columns as $column=>$strcolumn) {
 }
 
 $baseurl = new moodle_url('grade.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
+
+$mform = new select_form();
+$mform->display();
 
 $gradecount = $renderer->show_grade_count($page, $perpage);
 echo $OUTPUT->paging_bar($gradecount, $page, $perpage, $baseurl);

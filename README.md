@@ -3,14 +3,14 @@
 Features
 --------
 - Render courses count. 
-- Render courses count in hour, day, week and month. 
-- Render course names which has manager, coursecreator, editingteacher, teacher role order by timecreated DESC.
-- Render course file size order by DESC. 
-- Render all grades order by userid ASC. 
+- Render courses count in hour, day, week and month.
+- Render course names which has enrol as manager, coursecreator, editingteacher or teacher role order by timecreated DESC.
+- Render course file size order by DESC.
+- Render all grades order by userid ASC.
 
 TODO
 --------
-- Implement useful features conserning course for admins.
+- Implement useful features concerning course for admins.
 
 ## License ##
 

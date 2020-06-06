@@ -33,6 +33,7 @@ if (isguestuser()) {
 }
 
 admin_externalpage_setup('tool_managecourse');
+
 $url = new moodle_url('/admin/tool/managecourse/index.php');
 $PAGE->set_url($url);
 $PAGE->set_title(get_string('managecourse', 'tool_managecourse'));
