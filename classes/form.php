@@ -36,7 +36,23 @@ require_once("$CFG->libdir/formslib.php");
  
 class select_form extends moodleform {
 
-//// sqls
+    // properties
+    public $userid;
+
+    // setter and getter
+    public function set_userid($userid) {
+
+        $this->userid = $userid;
+
+    }
+
+    public function get_userid() {
+
+        return $this->userid;
+
+    }
+
+    // sqls
 
     private function get_users_sql() {
 
@@ -52,7 +68,7 @@ class select_form extends moodleform {
 
     }
 
-//// methods
+    // methods
 
     public function get_users_list() {
 
@@ -61,6 +77,7 @@ class select_form extends moodleform {
         $rs = $DB->get_recordset_sql($this->get_users_sql(), array());
 
         $row = array();
+        $row += array(NULL=>get_string('allusers', 'tool_managecourse'));
         foreach ($rs as $c) {
             $userid = $c->userid;
             $firstname = $c->firstname;
@@ -83,6 +100,7 @@ class select_form extends moodleform {
         $options = $this->get_users_list();
         $attributes = NULL;
         $mform->addElement('select', 'type', '', $options, $attributes);
+        $this->add_action_buttons(true, get_string('selectuser', 'tool_managecourse'));
  
     }
 
