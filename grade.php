@@ -47,18 +47,23 @@ $renderer = $PAGE->get_renderer('tool_managecourse');
 echo $OUTPUT->header();
 echo $renderer->show_table();
 
-
 $mform = NULL;
 if (!$mform) {
     $mform = new select_form();
 }
 
+$userid = NULL;
+$courseid = NULL;
+
 $fromform = $mform->get_data();
 if ($fromform) {
     $userid = $fromform->type;
+    $courseid = $fromform->type2;
     $mform->set_userid($userid);
+    $mform->set_courseid($courseid);
 } else {
     $userid = NULL;
+    $courseid = NULL;
 }
 
 // page parameters
@@ -67,8 +72,10 @@ $perpage = optional_param('perpage', 20, PARAM_INT);    // how many per page
 $sort    = optional_param('sort', 'userid', PARAM_ALPHA);
 $dir     = optional_param('dir', 'DESC', PARAM_ALPHA);
 $userid  = optional_param('userid', $userid, PARAM_INT);
+$courseid  = optional_param('courseid', $courseid, PARAM_INT);
 
-$baseurl = new moodle_url('grade.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage, 'userid' => $userid));
+$baseurl = new moodle_url('grade.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage,
+       	                      'userid' => $userid, 'courseid' => $courseid));
 $returnurl = new moodle_url('/admin/tool/managecourse/grade.php');
 
 $columns = array('id'    => get_string('id', 'tool_managecourse'),
@@ -105,13 +112,14 @@ foreach ($columns as $column=>$strcolumn) {
 //Form processing and displaying is done here
 if ($mform->is_cancelled()) {
     //Handle form cancel operation, if cancel button is present on form
-    $mform->cleanup(true);
+    //$mform->cleanup(true);
     redirect($returnurl);
 } else if ($fromform = $mform->get_data()) {
     //In this case you process validated data. $mform->get_data() returns data posted in form.
     $userid = $fromform->type;
-    $mform->set_data($userid);
+    $courseid = $fromform->type2;
     $mform->set_userid($userid);
+    $mform->set_courseid($courseid);
     $mform->display();
 } else {
     // this branch is executed if the form is submitted but the data doesn't validate and the form should be redisplayed
@@ -119,19 +127,21 @@ if ($mform->is_cancelled()) {
  
     //Set default data (if any)
     $mform->set_userid($userid);
-    $mform->set_data($userid);
+    $mform->set_courseid($courseid);
     //displays the form
     $mform->display();
     echo "
     <script type=\"text/javascript\">
         document.getElementById(\"id_type\").options[$userid].selected = true;
+        document.getElementById(\"id_type2\").options[$courseid].selected = true;
     </script>
     ";
 }
 
-$gradecount = $renderer->show_grade_count($page, $perpage, $userid);
+$gradecount = $renderer->show_grade_count($page, $perpage, $userid, $courseid);
+echo "There are $gradecount data.";
 echo $OUTPUT->paging_bar($gradecount, $page, $perpage, $baseurl);
-echo $renderer->show_grade_table1($page, $perpage, $userid);
+echo $renderer->show_grade_table1($page, $perpage, $userid, $courseid);
 
 echo "<a href=\"index.php\">back to index</a>";
 echo $OUTPUT->footer();

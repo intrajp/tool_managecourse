@@ -7,7 +7,7 @@ Features
 - Render course names which has enrol as manager, coursecreator, editingteacher or teacher role order by timecreated DESC.
 - Render course file size order by DESC.
 - Render all grades order by userid ASC.
-- Render grades as user name.
+- Render grades of user(s) selected by user name and course name ASC.
 
 TODO
 --------

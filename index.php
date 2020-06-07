@@ -32,6 +32,9 @@ if (isguestuser()) {
     throw new require_login_exception('Guests are not allowed here.');
 }
 
+// This is a system level page that operates on other contexts.
+require_login();
+
 admin_externalpage_setup('tool_managecourse');
 
 $url = new moodle_url('/admin/tool/managecourse/index.php');

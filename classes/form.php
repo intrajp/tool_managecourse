@@ -38,6 +38,7 @@ class select_form extends moodleform {
 
     // properties
     public $userid;
+    public $courseid;
 
     // setter and getter
     public function set_userid($userid) {
@@ -46,9 +47,21 @@ class select_form extends moodleform {
 
     }
 
+    public function set_courseid($courseid) {
+
+        $this->courseid = $courseid;
+
+    }
+
     public function get_userid() {
 
         return $this->userid;
+
+    }
+
+    public function get_courseid() {
+
+        return $this->courseid;
 
     }
 
@@ -61,6 +74,20 @@ class select_form extends moodleform {
         $DESC = "DESC";
         $ASC = "ASC";
         $ORDER_BY = "ORDER BY u.id $ASC";
+
+        $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} ${ORDER_BY}";
+
+        return $sql;
+
+    }
+
+    private function get_courses_sql() {
+
+        $VIEW_COLUMNS = "c.id as courseid, c.fullname";
+        $FROM_TABLES = "FROM {course} c";
+        $DESC = "DESC";
+        $ASC = "ASC";
+        $ORDER_BY = "ORDER BY c.id $ASC";
 
         $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} ${ORDER_BY}";
 
@@ -90,6 +117,25 @@ class select_form extends moodleform {
 
     }
 
+    public function get_courses_list() {
+
+        global $DB;
+
+        $rs = $DB->get_recordset_sql($this->get_courses_sql(), array());
+
+        $row = array();
+        $row += array(NULL=>get_string('allcourses', 'tool_managecourse'));
+        foreach ($rs as $c) {
+            $courseid = $c->courseid;
+            $fullname = $c->fullname;
+            $row += array("$courseid"=>"$fullname");
+        }
+        $rs->close();
+
+        return $row;
+
+    }
+
     //Add elements to form
     public function definition() {
 
@@ -98,9 +144,11 @@ class select_form extends moodleform {
         $mform = $this->_form;
 
         $options = $this->get_users_list();
+        $options2 = $this->get_courses_list();
         $attributes = NULL;
         $mform->addElement('select', 'type', '', $options, $attributes);
-        $this->add_action_buttons(true, get_string('selectuser', 'tool_managecourse'));
+        $mform->addElement('select', 'type2', '', $options2, $attributes);
+        $this->add_action_buttons(true, get_string('selectuserorcourse', 'tool_managecourse'));
  
     }
 
