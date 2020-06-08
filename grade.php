@@ -29,6 +29,11 @@ require_once($CFG->libdir.'/moodlelib.php');
 require_once($CFG->dirroot.'/admin/tool/managecourse/classes/renderer.php');
 require_once($CFG->dirroot.'/admin/tool/managecourse/classes/form.php');
 
+// including custom js file
+require_once($CFG->libdir . '/pagelib.php');
+global $PAGE;
+$PAGE->requires->js(new moodle_url($CFG->wwwroot . '/admin/tool/managecourse/js/jQuery-3.5.1.min.js'));
+
 if (isguestuser()) {
     throw new require_login_exception('Guests are not allowed here.');
 }
@@ -37,6 +42,7 @@ if (isguestuser()) {
 require_login();
 
 admin_externalpage_setup('tool_managecourse');
+
 $url = new moodle_url('/admin/tool/managecourse/index.php');
 $PAGE->set_url($url);
 $PAGE->set_title(get_string('managecourse', 'tool_managecourse'));
@@ -53,16 +59,20 @@ if (!$mform) {
 }
 
 $userid = NULL;
+$categoryid = NULL;
 $courseid = NULL;
 
 $fromform = $mform->get_data();
 if ($fromform) {
     $userid = $fromform->type;
-    $courseid = $fromform->type2;
+    $categoryid = $fromform->type2;
+    $courseid = $fromform->type3;
     $mform->set_userid($userid);
+    $mform->set_categoryid($categoryid);
     $mform->set_courseid($courseid);
 } else {
     $userid = NULL;
+    $categoryid = NULL;
     $courseid = NULL;
 }
 
@@ -72,10 +82,11 @@ $perpage = optional_param('perpage', 20, PARAM_INT);    // how many per page
 $sort    = optional_param('sort', 'userid', PARAM_ALPHA);
 $dir     = optional_param('dir', 'DESC', PARAM_ALPHA);
 $userid  = optional_param('userid', $userid, PARAM_INT);
+$categoryid  = optional_param('categoryid', $categoryid, PARAM_INT);
 $courseid  = optional_param('courseid', $courseid, PARAM_INT);
 
 $baseurl = new moodle_url('grade.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage,
-       	                      'userid' => $userid, 'courseid' => $courseid));
+       	                      'userid' => $userid, 'courseid' => $courseid, 'categoryid' => $categoryid));
 $returnurl = new moodle_url('/admin/tool/managecourse/grade.php');
 
 $columns = array('id'    => get_string('id', 'tool_managecourse'),
@@ -108,7 +119,6 @@ foreach ($columns as $column=>$strcolumn) {
     $hcolumns[$column] = "<a href=\"grade.php?sort=$column&amp;dir=$columndir&amp;page=$page&amp;perpage=$perpage\">".$strcolumn."</a>$columnicon";
 }
 
-
 //Form processing and displaying is done here
 if ($mform->is_cancelled()) {
     //Handle form cancel operation, if cancel button is present on form
@@ -117,9 +127,12 @@ if ($mform->is_cancelled()) {
 } else if ($fromform = $mform->get_data()) {
     //In this case you process validated data. $mform->get_data() returns data posted in form.
     $userid = $fromform->type;
-    $courseid = $fromform->type2;
+    $categoryid = $fromform->type2;
+    $courseid = $fromform->type3;
     $mform->set_userid($userid);
+    $mform->set_categoryid($categoryid);
     $mform->set_courseid($courseid);
+
     $mform->display();
 } else {
     // this branch is executed if the form is submitted but the data doesn't validate and the form should be redisplayed
@@ -127,21 +140,25 @@ if ($mform->is_cancelled()) {
  
     //Set default data (if any)
     $mform->set_userid($userid);
+    $mform->set_categoryid($categoryid);
     $mform->set_courseid($courseid);
     //displays the form
     $mform->display();
     echo "
-    <script type=\"text/javascript\">
-        document.getElementById(\"id_type\").options[$userid].selected = true;
-        document.getElementById(\"id_type2\").options[$courseid].selected = true;
+    <script>
+        $(function () {
+            $(\"#id_type option[value=$userid]\").attr('selected', 'true');
+            $(\"#id_type2 option[value=$categoryid]\").attr('selected', 'true');
+            $(\"#id_type3 option[value=$courseid]\").attr('selected', 'true');
+        });
     </script>
     ";
 }
 
-$gradecount = $renderer->show_grade_count($page, $perpage, $userid, $courseid);
+$gradecount = $renderer->show_grade_count($page, $perpage, $userid, $categoryid, $courseid);
 echo "There are $gradecount data.";
 echo $OUTPUT->paging_bar($gradecount, $page, $perpage, $baseurl);
-echo $renderer->show_grade_table1($page, $perpage, $userid, $courseid);
+echo $renderer->show_grade_table1($page, $perpage, $userid, $categoryid, $courseid);
 
 echo "<a href=\"index.php\">back to index</a>";
 echo $OUTPUT->footer();

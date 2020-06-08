@@ -119,7 +119,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
 
     }
 
-    private function grade_sql($userid, $courseid) {
+    private function grade_sql($userid, $categoryid, $courseid) {
 
         $VIEW_COLUMNS="m.id as user_enrolments_id, k.name AS categoryname, u.id AS userid, u.firstname,
                        u.lastname, e.id enrolid, r.shortname AS rolename, c.fullname,
@@ -143,8 +143,12 @@ class tool_managecourse_renderer extends plugin_renderer_base {
             $CONDITION1 = "AND u.id = $userid";
         }
         $CONDITION2 = NULL;
+        if ($categoryid) {
+            $CONDITION2 = "AND k.id = $categoryid";
+        }
+        $CONDITION3 = NULL;
         if ($courseid) {
-            $CONDITION2 = "AND c.id = $courseid";
+            $CONDITION3 = "AND c.id = $courseid";
         }
         $GROUP_BY="GROUP BY m.id,u.id";
         $ORDER="ORDER BY u.id, c.startdate, m.id, e.id, c.id";
@@ -158,7 +162,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         $sql="SELECT ${VIEW_COLUMNS} ${FROM_TABLES} WHERE ${BIND1} AND ${BIND2}
                   AND ${BIND3} AND ${BIND4} AND ${BIND5} AND ${BIND6}
 		  AND ${BIND7} AND ${BIND8} AND ${BIND9} ${CONDITION1} ${CONDITION2}
-                  ${GROUP_BY} ${ORDER}";
+                  ${CONDITION3} ${GROUP_BY} ${ORDER}";
 
         return $sql;
     }
@@ -232,11 +236,11 @@ class tool_managecourse_renderer extends plugin_renderer_base {
 
     }
 
-    public function show_grade_count($page, $perpage, $userid, $courseid) {
+    public function show_grade_count($page, $perpage, $userid, $categoryid, $courseid) {
 
         global $DB;
 
-        $records = $DB->get_records_sql($this->grade_sql($userid, $courseid), array());
+        $records = $DB->get_records_sql($this->grade_sql($userid, $categoryid, $courseid), array());
         $counts = count($records);
 
 	return $counts;
@@ -380,7 +384,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         return html_writer::table($table);
     }
 
-    public function show_grade_table1($page, $perpage, $userid, $courseid) {
+    public function show_grade_table1($page, $perpage, $userid, $categoryid, $courseid) {
 
         global $CFG;
         global $DB;
@@ -400,7 +404,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         $table->attributes['class'] = 'admintable generaltable';
         $table->data  = array();
 
-        $rs = $DB->get_recordset_sql($this->grade_sql($userid, $courseid), array(), $page*$perpage, $perpage);
+        $rs = $DB->get_recordset_sql($this->grade_sql($userid, $categoryid, $courseid), array(), $page*$perpage, $perpage);
         foreach ($rs as $c) {
             $row = array();
             $row[] = $c->categoryname;

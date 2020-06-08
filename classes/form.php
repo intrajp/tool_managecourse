@@ -37,13 +37,20 @@ require_once("$CFG->libdir/formslib.php");
 class select_form extends moodleform {
 
     // properties
-    public $userid;
-    public $courseid;
+    private $userid;
+    private $categoryid;
+    private $courseid;
 
     // setter and getter
     public function set_userid($userid) {
 
         $this->userid = $userid;
+
+    }
+
+    public function set_categoryid($categoryid) {
+
+        $this->categoryid = $categoryid;
 
     }
 
@@ -56,6 +63,12 @@ class select_form extends moodleform {
     public function get_userid() {
 
         return $this->userid;
+
+    }
+
+    public function get_categoryid() {
+
+        return $this->categoryid;
 
     }
 
@@ -76,6 +89,17 @@ class select_form extends moodleform {
         $ORDER_BY = "ORDER BY u.id $ASC";
 
         $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} ${ORDER_BY}";
+
+        return $sql;
+
+    }
+
+    private function get_course_category_sql() {
+
+        $sql = "WITH RECURSIVE category_path (id, parent, name, path) AS
+                (SELECT id, parent, name, name as path FROM {course_categories} WHERE parent=0 UNION ALL
+                SELECT k.id, k.parent, k.name, CONCAT(cp.path, '>', k.name) FROM category_path AS cp
+                JOIN {course_categories} AS k ON cp.id = k.parent) SELECT * FROM category_path ORDER BY path";
 
         return $sql;
 
@@ -117,6 +141,30 @@ class select_form extends moodleform {
 
     }
 
+    public function get_course_category_list() {
+
+        global $DB;
+
+        $rs = $DB->get_recordset_sql($this->get_course_category_sql(), array());
+
+        $row = array();
+        $row += array(NULL=>get_string('allcategories', 'tool_managecourse'));
+        foreach ($rs as $c) {
+            $categoryid = $c->id;
+            $parentid = $c->parent;
+            $categoryname = $c->name;
+            if ($parentid == 0) {
+                $twoequals = get_string('twoequals', 'tool_managecourse');
+		$categoryname = $twoequals.$categoryname.$twoequals;
+            }
+            $row += array("$categoryid"=>"$categoryname");
+        }
+        $rs->close();
+
+        return $row;
+
+    }
+
     public function get_courses_list() {
 
         global $DB;
@@ -142,12 +190,14 @@ class select_form extends moodleform {
         global $CFG;
  
         $mform = $this->_form;
-
+        $categoryid = 0;
         $options = $this->get_users_list();
-        $options2 = $this->get_courses_list();
+        $options2 = $this->get_course_category_list();
+        $options3 = $this->get_courses_list();
         $attributes = NULL;
         $mform->addElement('select', 'type', '', $options, $attributes);
         $mform->addElement('select', 'type2', '', $options2, $attributes);
+        $mform->addElement('select', 'type3', '', $options3, $attributes);
         $this->add_action_buttons(true, get_string('selectuserorcourse', 'tool_managecourse'));
  
     }

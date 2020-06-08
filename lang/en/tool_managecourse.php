@@ -44,5 +44,7 @@ $string['roleshortname'] = 'roleshortname';
 $string['finalgrade'] = 'finalgrade';
 $string['rawgrademax'] = 'rawgrademax';
 $string['allusers'] = 'All users';
+$string['twoequals'] = '==';
+$string['allcategories'] = 'All categories';
 $string['allcourses'] = 'All courses';
 $string['selectuserorcourse'] = 'send';
