@@ -94,6 +94,14 @@ class select_form extends moodleform {
 
     }
 
+    private function get_course_name_sql($courseid) {
+
+        $sql = "SELECT id AS courseid, fullname FROM {course} WHERE id = $courseid";
+
+        return $sql;
+
+    }
+
     private function get_course_category_sql() {
 
         $sql = "WITH RECURSIVE category_path (id, parent, name, path) AS
@@ -105,15 +113,20 @@ class select_form extends moodleform {
 
     }
 
-    private function get_courses_sql() {
+    private function get_courses_sql($categoryid) {
 
         $VIEW_COLUMNS = "c.id as courseid, c.fullname";
         $FROM_TABLES = "FROM {course} c";
+        if ($categoryid != NULL) {
+            $WHERE = "WHERE c.category = $categoryid";
+        } else {
+            $WHERE = "";
+	}
         $DESC = "DESC";
         $ASC = "ASC";
         $ORDER_BY = "ORDER BY c.id $ASC";
 
-        $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} ${ORDER_BY}";
+        $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} ${WHERE} ${ORDER_BY}";
 
         return $sql;
 
@@ -165,14 +178,32 @@ class select_form extends moodleform {
 
     }
 
-    public function get_courses_list() {
+    public function get_courses_list($categoryid) {
 
         global $DB;
 
-        $rs = $DB->get_recordset_sql($this->get_courses_sql(), array());
+        $rs = $DB->get_recordset_sql($this->get_courses_sql($categoryid), array());
 
         $row = array();
         $row += array(NULL=>get_string('allcourses', 'tool_managecourse'));
+        foreach ($rs as $c) {
+            $courseid = $c->courseid;
+            $fullname = $c->fullname;
+            $row += array("$courseid"=>"$fullname");
+        }
+        $rs->close();
+
+        return $row;
+
+    }
+
+    public function get_course_name($courseid) {
+
+        global $DB;
+
+        $rs = $DB->get_recordset_sql($this->get_course_name_sql($courseid), array());
+
+        $row = array();
         foreach ($rs as $c) {
             $courseid = $c->courseid;
             $fullname = $c->fullname;
@@ -193,7 +224,7 @@ class select_form extends moodleform {
         $categoryid = 0;
         $options = $this->get_users_list();
         $options2 = $this->get_course_category_list();
-        $options3 = $this->get_courses_list();
+        $options3 = $this->get_courses_list(NULL);
         $attributes = NULL;
         $mform->addElement('select', 'type', '', $options, $attributes);
         $mform->addElement('select', 'type2', '', $options2, $attributes);

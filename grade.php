@@ -133,17 +133,45 @@ if ($mform->is_cancelled()) {
     $mform->set_categoryid($categoryid);
     $mform->set_courseid($courseid);
 
-    $mform->display();
-} else {
-    // this branch is executed if the form is submitted but the data doesn't validate and the form should be redisplayed
-    // or on the first display of the form.
- 
-    //Set default data (if any)
-    $mform->set_userid($userid);
-    $mform->set_categoryid($categoryid);
-    $mform->set_courseid($courseid);
-    //displays the form
-    $mform->display();
+    $options = $mform->get_courses_list($categoryid);
+
+    if ($categoryid) {
+        echo "
+        <script>
+            $(function () {
+                $(\"#id_type3\")
+                .find('option')
+                .remove()
+                .end()
+                ;
+            });
+        </script>
+        ";
+        if ($courseid) {
+            $cvar = $mform->get_course_name($courseid);
+            foreach ($cvar as $courseid => $course_name) {
+                echo "
+                <script>
+                    $(function () {
+                        $(\"#id_type3\")
+                            .append('<option value=\"$courseid\">$course_name</option>');
+                    });
+                </script>
+                ";
+            }
+        }
+        foreach ($options as $courseidecho => $fullname) {
+            echo "
+            <script>
+                $(function () {
+                    $(\"#id_type3\")
+                        .append('<option value=\"$courseidecho\">$fullname</option>');
+                });
+            </script>
+            ";
+        }
+    }
+
     echo "
     <script>
         $(function () {
@@ -153,6 +181,56 @@ if ($mform->is_cancelled()) {
         });
     </script>
     ";
+    $mform->display();
+
+} else {
+    // this branch is executed if the form is submitted but the data doesn't validate and the form should be redisplayed
+    // or on the first display of the form.
+    // here, we are using this branch as pagenation goes.
+
+    //Set default data (if any)
+    $mform->set_userid($userid);
+    $mform->set_categoryid($categoryid);
+    $mform->set_courseid($courseid);
+
+    $options = $mform->get_courses_list($categoryid);
+    $attributes = NULL;
+    // same as above
+    if ($categoryid != NULL) {
+        echo "
+        <script>
+            $(function () {
+                $(\"#id_type3\")
+                .find('option')
+                .remove()
+                .end()
+                ;
+            });
+        </script>
+        ";
+        foreach ($options as $courseidecho => $fullname) {
+            echo "
+            <script>
+                $(function () {
+                    $(\"#id_type3\")
+                        .append('<option value=\"$courseidecho\">$fullname</option>');
+                });
+            </script>
+            ";
+        }
+    }
+    echo "
+    <script>
+        $(function () {
+            $(\"#id_type option[value=$userid]\").attr('selected', 'true');
+            $(\"#id_type2 option[value=$categoryid]\").attr('selected', 'true');
+            $(\"#id_type3 option[value=$courseid]\").attr('selected', 'true');
+        });
+    </script>
+    ";
+
+    //displays the form
+    $mform->display();
 }
 
 $gradecount = $renderer->show_grade_count($page, $perpage, $userid, $categoryid, $courseid);
