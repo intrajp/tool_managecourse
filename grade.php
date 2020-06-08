@@ -132,6 +132,13 @@ if ($mform->is_cancelled()) {
     $mform->set_userid($userid);
     $mform->set_categoryid($categoryid);
     $mform->set_courseid($courseid);
+    $flg_erase = 0;
+
+    if (($categoryid) && ($courseid)) {
+        if (!$mform->is_course_exists_in_category($categoryid, $courseid)) {
+            $flg_erase = 1;
+        }
+    }
 
     $options = $mform->get_courses_list($categoryid);
 
@@ -147,7 +154,7 @@ if ($mform->is_cancelled()) {
             });
         </script>
         ";
-        if ($courseid) {
+        if (($courseid) && ($flg_erase == 0)) {
             $cvar = $mform->get_course_name($courseid);
             foreach ($cvar as $courseid => $course_name) {
                 echo "

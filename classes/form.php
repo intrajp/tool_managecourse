@@ -121,12 +121,29 @@ class select_form extends moodleform {
             $WHERE = "WHERE c.category = $categoryid";
         } else {
             $WHERE = "";
-	}
+        }
         $DESC = "DESC";
         $ASC = "ASC";
         $ORDER_BY = "ORDER BY c.id $ASC";
 
         $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} ${WHERE} ${ORDER_BY}";
+
+        return $sql;
+
+    }
+
+    private function is_course_exists_in_category_sql($categoryid, $courseid) {
+
+        $VIEW_COLUMNS = "c.id as courseid, k.id as categoryid";
+        $FROM_TABLES = "FROM {course} c, {course_categories} k";
+        $BIND1 = "c.category = k.id";
+        $BIND2 = "k.id = $categoryid";
+        $BIND3 = "c.id = $courseid";
+        $DESC = "DESC";
+        $ASC = "ASC";
+
+	$sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} WHERE ${BIND1} AND ${BIND2}
+                AND ${BIND3}";
 
         return $sql;
 
@@ -168,7 +185,7 @@ class select_form extends moodleform {
             $categoryname = $c->name;
             if ($parentid == 0) {
                 $twoequals = get_string('twoequals', 'tool_managecourse');
-		$categoryname = $twoequals.$categoryname.$twoequals;
+                $categoryname = $twoequals.$categoryname.$twoequals;
             }
             $row += array("$categoryid"=>"$categoryname");
         }
@@ -208,6 +225,24 @@ class select_form extends moodleform {
             $courseid = $c->courseid;
             $fullname = $c->fullname;
             $row += array("$courseid"=>"$fullname");
+        }
+        $rs->close();
+
+        return $row;
+
+    }
+
+    public function is_course_exists_in_category($categoryid, $courseid) {
+
+        global $DB;
+
+        $rs = $DB->get_recordset_sql($this->is_course_exists_in_category_sql($categoryid, $courseid), array());
+
+        $row = array();
+        foreach ($rs as $c) {
+            $categoryid = $c->categoryid;
+            $courseid = $c->courseid;
+            $row += array("$categoryid"=>"$courseid");
         }
         $rs->close();
 
