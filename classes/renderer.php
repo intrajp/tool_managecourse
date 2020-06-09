@@ -424,4 +424,39 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         return html_writer::table($table);
     }
 
+    public function render_grade_pdf($userid, $categoryid, $courseid) {
+
+        global $CFG;
+        global $DB;
+        $data = array();
+        $table = new html_table();
+        $table->head = [
+            get_string('categoryname', 'tool_managecourse'),
+            get_string('fullname', 'tool_managecourse'),
+            get_string('firstname', 'tool_managecourse'),
+            get_string('lastname', 'tool_managecourse'),
+            get_string('startdate', 'tool_managecourse'),
+            get_string('enddate', 'tool_managecourse'),
+            get_string('finalgrade', 'tool_managecourse'),
+            get_string('rawgrademax', 'tool_managecourse'),
+        ];
+
+        $rs = $DB->get_recordset_sql($this->grade_sql($userid, $categoryid, $courseid), array());
+        foreach ($rs as $c) {
+            $row = array();
+            $row[] = $c->categoryname;
+            $row[] = $c->fullname;
+            $row[] = $c->firstname;
+            $row[] = $c->lastname;
+            $row[] = $c->startdate;
+            $row[] = $c->enddate;
+            $row[] = $c->finalgrade;
+            $row[] = $c->rawgrademax;
+        }
+        $rs->close();
+
+        return $row;
+
+    }
+
 }

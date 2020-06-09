@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Web interface for generating plugins.
+ * File containing the general information page.
  *
  * @package     tool_managecourse
  * @category    admin
@@ -244,6 +244,7 @@ $gradecount = $renderer->show_grade_count($page, $perpage, $userid, $categoryid,
 echo "There are $gradecount data.";
 echo $OUTPUT->paging_bar($gradecount, $page, $perpage, $baseurl);
 echo $renderer->show_grade_table1($page, $perpage, $userid, $categoryid, $courseid);
-
+echo "<a href=\"pdf.php?userid=$userid&amp;categoryid=$categoryid&amp;courseid=$courseid\">create pdf from this result</a>";
+echo "<br />";
 echo "<a href=\"index.php\">back to index</a>";
 echo $OUTPUT->footer();

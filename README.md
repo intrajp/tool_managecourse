@@ -8,6 +8,7 @@ Features
 - Render course file size order by DESC.
 - Render all grades order by userid ASC.
 - Render grades of user(s) selected by user name, category name and course name ASC.
+- Create PDF file of above feature.
 
 TODO
 --------
