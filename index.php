@@ -47,7 +47,6 @@ $renderer = $PAGE->get_renderer('tool_managecourse');
 
 echo $OUTPUT->header();
 echo $renderer->show_table();
-
 // page parameters
 $page    = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', 20, PARAM_INT);    // how many per page

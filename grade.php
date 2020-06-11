@@ -28,10 +28,10 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/moodlelib.php');
 require_once($CFG->dirroot.'/admin/tool/managecourse/classes/renderer.php');
 require_once($CFG->dirroot.'/admin/tool/managecourse/classes/form.php');
-
-// including custom js file
 require_once($CFG->libdir . '/pagelib.php');
 global $PAGE;
+
+// including custom js file
 $PAGE->requires->js(new moodle_url($CFG->wwwroot . '/admin/tool/managecourse/js/jQuery-3.5.1.min.js'));
 
 if (isguestuser()) {
@@ -244,7 +244,9 @@ $gradecount = $renderer->show_grade_count($page, $perpage, $userid, $categoryid,
 echo "There are $gradecount data.";
 echo $OUTPUT->paging_bar($gradecount, $page, $perpage, $baseurl);
 echo $renderer->show_grade_table1($page, $perpage, $userid, $categoryid, $courseid);
-echo "<a href=\"pdf.php?userid=$userid&amp;categoryid=$categoryid&amp;courseid=$courseid\">create pdf from this result</a>";
+echo "<a href=\"pdf.php?userid=$userid&amp;categoryid=$categoryid&amp;courseid=$courseid\">Create pdf from this result</a>";
 echo "<br />";
-echo "<a href=\"index.php\">back to index</a>";
+echo "<a href=\"upload_file.php\">Upload pdf template file.</a>";
+echo "<br />";
+echo "<a href=\"index.php\">Back to index</a>";
 echo $OUTPUT->footer();

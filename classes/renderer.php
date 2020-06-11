@@ -33,7 +33,66 @@ defined('MOODLE_INTERNAL') || die();
  */
 class tool_managecourse_renderer extends plugin_renderer_base {
 
-    public function __construct() {
+    /** @var tool_managecourse_installer */
+    protected $uploader = null;
+
+    /**
+     * Sets the tool_managecourse_uploader instance being used.
+     *
+     * @throws coding_exception if the uploader has been already set
+     * @param tool_managecourse_uploader $uploader
+     */
+    public function set_uploader_instance(tool_managecourse_uploader $uploader) {
+        if (is_null($this->uploader)) {
+            $this->uploader = $uploader;
+        } else {
+            throw new coding_exception('Attempting to reset the uploader instance.');
+        }
+    }
+
+    /**
+     * Defines the index page layout (for PDF upload)
+     *
+     * @return string
+     */
+    public function index_page() {
+
+        if (is_null($this->uploader)) {
+            throw new coding_exception('Uploader instance has not been set.');
+        }
+
+        $out = $this->index_page_heading();
+        $out .= $this->index_page_upload();
+        $out .= $this->output->footer();
+
+        return $out;
+    }
+
+    /**
+     * Renders the index page heading (for PDF upload)
+     *
+     * @return string
+     */
+    protected function index_page_heading() {
+        return $this->output->heading(get_string('pluginname', 'tool_managecourse'));
+    }
+
+    /**
+     * Renders the widget (for uploading PDF)
+     *
+     * @return string
+     */
+    protected function index_page_upload() {
+
+        $form = $this->uploader->get_uploadpdf_form();
+
+        ob_start();
+        $form->display();
+        $out = ob_get_clean();
+
+        $out = $this->box($out, 'generalbox', 'uploadpdfbox');
+
+        return $out;
     }
 
 //// sqls

@@ -48,3 +48,6 @@ $string['twoequals'] = '==';
 $string['allcategories'] = 'All categories';
 $string['allcourses'] = 'All courses';
 $string['selectuserorcourse'] = 'send';
+$string['uploadpdf'] = 'Upload PDF';
+$string['uploadpdffile'] = 'Upload PDF file';
+$string['uploadpdfsubmit'] = 'Upload PDF template file';
