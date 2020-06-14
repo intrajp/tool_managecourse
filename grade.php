@@ -160,6 +160,10 @@ function init() {
                 $(function () {
                     $('#id_type3 option[value=0]').remove();
                 })
+                // which is a top page
+                $(function () {
+                    $('#id_type3 option[value=1]').remove();
+                })
                 if ((useridval != -1) && (categoryidchanged != -1)){
                     $('#id_submitbutton').prop('disabled', false);
                 }
@@ -239,6 +243,10 @@ if ($mform->is_cancelled()) {
                     $(function () {
                         $('#id_type3 option[value=0]').remove();
                     })
+                    // which is a top page
+                    $(function () {
+                        $('#id_type3 option[value=1]').remove();
+                    })
                     $(function () {
                         $('#id_type3 option[value=$courseid]').prop('selected', true);
                     })
@@ -292,6 +300,10 @@ if ($mform->is_cancelled()) {
                     })
                     $(function () {
                         $('#id_type3 option[value=0]').remove();
+                    })
+                    // which is a top page
+                    $(function () {
+                        $('#id_type3 option[value=1]').remove();
                     })
                     $(function () {
                         $('#id_type3 option[value=$courseid]').prop('selected', true);
