@@ -16,19 +16,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * File containing the general information page.
+ * Returning course list from category id.
  *
- * @package     tool_eltranscriptprocessor
+ * @package     tool_managecourse
  * @category    admin
  * @copyright   2020 Shintaro Fujiwara <shintaro dot fujiwara at gmail dot com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 require(__DIR__.'/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/moodlelib.php');
-require_once($CFG->dirroot.'/admin/tool/eltranscriptprocessor/classes/form.php');
+require_once($CFG->dirroot.'/admin/tool/managecourse/classes/form.php');
 
 if (isguestuser()) {
     throw new require_login_exception('Guests are not allowed here.');
@@ -37,7 +36,7 @@ if (isguestuser()) {
 // This is a system level page that operates on other contexts.
 require_login();
 
-admin_externalpage_setup('tool_eltranscriptprocessor');
+admin_externalpage_setup('tool_managecourse');
 
 $mform = NULL;
 if (!$mform) {
