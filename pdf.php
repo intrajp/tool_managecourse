@@ -1,28 +1,4 @@
 <?php
-//============================================================+
-// File name   : example_001.php
-// Begin       : 2008-03-04
-// Last Update : 2013-05-14
-//
-// Description : Example 001 for TCPDF class
-//               Default Header and Footer
-//
-// Author: Nicola Asuni
-//
-// (c) Copyright:
-//               Nicola Asuni
-//               Tecnick.com LTD
-//               www.tecnick.com
-//               info@tecnick.com
-//============================================================+
-
-/**
- * Creates an example PDF TEST document using TCPDF
- * @package com.tecnick.tcpdf
- * @abstract TCPDF - Example: Default Header and Footer
- * @author Nicola Asuni
- * @since 2008-03-04
- */
 
 // This file is part of Moodle - http://moodle.org/
 //
@@ -71,13 +47,11 @@ $categoryid = $_GET['categoryid'];
 $courseid = $_GET['courseid'];
 
 if ((!$userid) && (!$categoryid) && (!$courseid)) {
-    echo "variables are missng.";
-    die;
+    throw new moodle_exception('Please select a user');
 }
 
 if (!$userid) {
-    echo "userid is missng.";
-    die;
+    throw new moodle_exception('Please select a user');
 }
 
 // Include the main TCPDF library (search for installation path).
