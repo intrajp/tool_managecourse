@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -43,7 +44,7 @@ require_login();
 
 admin_externalpage_setup('tool_managecourse');
 
-$url = new moodle_url('/admin/tool/managecourse/index.php');
+$url = new moodle_url('/admin/tool/managecourse/grade.php');
 $PAGE->set_url($url);
 $PAGE->set_title(get_string('managecourse', 'tool_managecourse'));
 $PAGE->set_heading(get_string('managecourse', 'tool_managecourse'));
@@ -51,7 +52,6 @@ $PAGE->set_heading(get_string('managecourse', 'tool_managecourse'));
 $renderer = $PAGE->get_renderer('tool_managecourse');
 
 echo $OUTPUT->header();
-echo $renderer->show_table();
 
 $mform = NULL;
 if (!$mform) {
@@ -62,9 +62,143 @@ $userid = NULL;
 $categoryid = NULL;
 $courseid = NULL;
 
+// page parameters
+$page    = optional_param('page', 0, PARAM_INT);
+$perpage = optional_param('perpage', 20, PARAM_INT);    // how many per page
+$sort    = optional_param('sort', 'userid', PARAM_ALPHA);
+$dir     = optional_param('dir', 'DESC', PARAM_ALPHA);
+$userid  = optional_param('userid', $userid, PARAM_INT);
+$categoryid  = optional_param('categoryid', $categoryid, PARAM_INT);
+$courseid  = optional_param('courseid', $courseid, PARAM_INT);
+
+echo "
+<script>
+window.onload = init;
+function init() {
+    // if cancel button is clicked set default
+    $('#id_cancel').click(function() {
+        $('#id_type option[value=-1]').prop('selected', true);
+        $('#id_type2 option[value=-1]').prop('selected', true);
+        $('#id_type3 option[value=-1]').prop('selected', true);
+    });
+
+    // set value to each option if any
+    $(function () {
+        $('#id_type option[value=$userid]').prop('selected', true);
+        $('#id_type2 option[value=$categoryid]').prop('selected', true);
+        $('#id_type3 option[value=$courseid]').prop('selected', true);
+    });
+    $(function () {
+        // we want to disable submit button when no user is selected.
+        var useridval = $('#id_type').val();
+        if (useridval == -1) {
+            $('#id_submitbutton').prop('disabled', true);
+        } else {
+            $('#id_submitbutton').prop('disabled', false);
+        }
+    });
+    // When a top of the option is selected follow other options 
+    // When option changed, send userid, categoryid and courseid. 
+    $('#id_type').change(function() {
+        var useridchanged = $(this).val();
+        var categoryidchanged = $('#id_type2').val();
+        var courseidchanged = $('#id_type3').val();
+        if (useridchanged == -1) {
+            $('#id_type2 option[value=-1]').prop('selected', true);
+            $('#id_type3 option[value=-1]').prop('selected', true);
+        }
+        if (useridchanged == -1) {
+            $('#id_submitbutton').prop('disabled', true);
+        } else {
+            $('#id_submitbutton').prop('disabled', false);
+        }
+        $.ajax({
+            type: 'post',
+            url: 'show_result.php',
+            data: {userid:useridchanged, categoryid:categoryidchanged, courseid:courseidchanged},
+            //dataType: 'json',
+        })
+            .done( function (responseText) {           
+            })
+            .fail( function (jqXHR, status, error) {
+                // Triggered if response status code is NOT 200 (OK)
+                alert(jqXHR.responseText);
+            })
+            .always( function() {
+                // Always run after .done() or .fail()
+                //$('p:first').after('<p>Thank you.</p>');
+           })
+    });
+    $('#id_type2').change(function() {
+        var categoryidchanged = $(this).val();
+        var useridchanged = $('#id_type').val();
+
+        var courseidchanged = $('#id_type3').val();
+        if (categoryidchanged == -1) {
+            $('#id_type3 option[value=-1]').prop('selected', true);
+        }
+        $.ajax({
+            type: 'post',
+            url: 'show_result.php',
+            data: {userid:useridchanged, categoryid:categoryidchanged, courseid:courseidchanged},
+            //dataType: 'json',
+        })
+            .done( function (responseText) {           
+                $('#id_type3').find('option').remove().end();
+                $(function () {
+                    $('#id_type3')
+                    .append(responseText);
+                })
+                $(function () {
+		    $('#id_type3 option[value=-1]').remove();
+                })
+                $(function () {
+		    $('#id_type3 option[value=0]').remove();
+                })
+            })
+            .fail( function (jqXHR, status, error) {
+                // Triggered if response status code is NOT 200 (OK)
+                alert(jqXHR.responseText);
+            })
+            .always( function() {
+                // Always run after .done() or .fail()
+                //$('p:first').after('<p>Thank you.</p>');
+           })
+    });
+    // last selecttion do nothing
+    $('#id_type3').change(function() {
+        var courseidchanged = $(this).val();
+        var useridchanged = $('#id_type').val();
+        var categoryidchanged = $('#id_type2').val();
+        $.ajax({
+            type: 'post',
+            url: 'show_result.php',
+            data: {userid:useridchanged, categoryid:categoryidchanged, courseid:courseidchanged},
+            //dataType: 'json',
+        })
+            .done( function (responseText) {           
+            })
+            .fail( function (jqXHR, status, error) {
+                // Triggered if response status code is NOT 200 (OK)
+                alert(jqXHR.responseText);
+            })
+            .always( function() {
+                // Always run after .done() or .fail()
+                //$('p:first').after('<p>Thank you.</p>');
+           })
+    });
+}
+</script>
+";
+
 $fromform = $mform->get_data();
 if ($fromform) {
     $userid = $fromform->type;
+    if ($userid == "-1") {
+        $show_queryresult = FALSE;
+    } else {
+        $show_queryresult = TRUE;
+    }
     $categoryid = $fromform->type2;
     $courseid = $fromform->type3;
     $mform->set_userid($userid);
@@ -76,63 +210,20 @@ if ($fromform) {
     $courseid = NULL;
 }
 
-// page parameters
-$page    = optional_param('page', 0, PARAM_INT);
-$perpage = optional_param('perpage', 20, PARAM_INT);    // how many per page
-$sort    = optional_param('sort', 'userid', PARAM_ALPHA);
-$dir     = optional_param('dir', 'DESC', PARAM_ALPHA);
-$userid  = optional_param('userid', $userid, PARAM_INT);
-$categoryid  = optional_param('categoryid', $categoryid, PARAM_INT);
-$courseid  = optional_param('courseid', $courseid, PARAM_INT);
-
+// rebase is needed shomehow here
 $baseurl = new moodle_url('grade.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage,
        	                      'userid' => $userid, 'courseid' => $courseid, 'categoryid' => $categoryid));
 $returnurl = new moodle_url('/admin/tool/managecourse/grade.php');
 
-$columns = array('id'    => get_string('id', 'tool_managecourse'),
-                 'timecreated' => get_string('timecreated', 'tool_managecourse'),
-                );
-$hcolumns = array();
-
-if (!isset($columns[$sort])) {
-    $sort = 'timecreated';
-}
-
-foreach ($columns as $column=>$strcolumn) {
-    if ($sort != $column) {
-        $columnicon = '';
-        if ($column == 'lastaccess') {
-            $columndir = 'DESC';
-        } else {
-            $columndir = 'ASC';
-        }
-    } else {
-        $columndir = $dir == 'ASC' ? 'DESC':'ASC';
-        if ($column == 'lastaccess') {
-            $columnicon = $dir == 'ASC' ? 'up':'down';
-        } else {
-            $columnicon = $dir == 'ASC' ? 'down':'up';
-        }
-        $columnicon = $OUTPUT->pix_icon('t/' . $columnicon, '');
-
-    }
-    $hcolumns[$column] = "<a href=\"grade.php?sort=$column&amp;dir=$columndir&amp;page=$page&amp;perpage=$perpage\">".$strcolumn."</a>$columnicon";
-}
+echo "<br />";
+echo "<a href=\"upload_file.php\">Upload pdf template file.</a>";
 
 //Form processing and displaying is done here
 if ($mform->is_cancelled()) {
     //Handle form cancel operation, if cancel button is present on form
-    //$mform->cleanup(true);
-    redirect($returnurl);
+    $mform->display();
+
 } else if ($fromform = $mform->get_data()) {
-    //In this case you process validated data. $mform->get_data() returns data posted in form.
-    $userid = $fromform->type;
-    $categoryid = $fromform->type2;
-    $courseid = $fromform->type3;
-    $mform->set_userid($userid);
-    $mform->set_categoryid($categoryid);
-    $mform->set_courseid($courseid);
-    $flg_erase = 0;
 
     if (($categoryid) && ($courseid)) {
         if (!$mform->is_course_exists_in_category($categoryid, $courseid)) {
@@ -140,54 +231,6 @@ if ($mform->is_cancelled()) {
         }
     }
 
-    $options = $mform->get_courses_list($categoryid);
-
-    if ($categoryid) {
-        echo "
-        <script>
-            $(function () {
-                $(\"#id_type3\")
-                .find('option')
-                .remove()
-                .end()
-                ;
-            });
-        </script>
-        ";
-        if (($courseid) && ($flg_erase == 0)) {
-            $cvar = $mform->get_course_name($courseid);
-            foreach ($cvar as $courseid => $course_name) {
-                echo "
-                <script>
-                    $(function () {
-                        $(\"#id_type3\")
-                            .append('<option value=\"$courseid\">$course_name</option>');
-                    });
-                </script>
-                ";
-            }
-        }
-        foreach ($options as $courseidecho => $fullname) {
-            echo "
-            <script>
-                $(function () {
-                    $(\"#id_type3\")
-                        .append('<option value=\"$courseidecho\">$fullname</option>');
-                });
-            </script>
-            ";
-        }
-    }
-
-    echo "
-    <script>
-        $(function () {
-            $(\"#id_type option[value=$userid]\").attr('selected', 'true');
-            $(\"#id_type2 option[value=$categoryid]\").attr('selected', 'true');
-            $(\"#id_type3 option[value=$courseid]\").attr('selected', 'true');
-        });
-    </script>
-    ";
     $mform->display();
 
 } else {
@@ -195,58 +238,25 @@ if ($mform->is_cancelled()) {
     // or on the first display of the form.
     // here, we are using this branch as pagenation goes.
 
-    //Set default data (if any)
-    $mform->set_userid($userid);
-    $mform->set_categoryid($categoryid);
-    $mform->set_courseid($courseid);
+    $userid = $_GET['userid'];
+    $categoryid = $_GET['categoryid'];
+    $courseid = $_GET['courseid'];
+    $perpage = $_GET['perpage'];
+    $page = $_GET['page'];
 
-    $options = $mform->get_courses_list($categoryid);
-    $attributes = NULL;
-    // same as above
-    if ($categoryid != NULL) {
-        echo "
-        <script>
-            $(function () {
-                $(\"#id_type3\")
-                .find('option')
-                .remove()
-                .end()
-                ;
-            });
-        </script>
-        ";
-        foreach ($options as $courseidecho => $fullname) {
-            echo "
-            <script>
-                $(function () {
-                    $(\"#id_type3\")
-                        .append('<option value=\"$courseidecho\">$fullname</option>');
-                });
-            </script>
-            ";
-        }
-    }
-    echo "
-    <script>
-        $(function () {
-            $(\"#id_type option[value=$userid]\").attr('selected', 'true');
-            $(\"#id_type2 option[value=$categoryid]\").attr('selected', 'true');
-            $(\"#id_type3 option[value=$courseid]\").attr('selected', 'true');
-        });
-    </script>
-    ";
+    $baseurl = new moodle_url('grade.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage,
+                                  'userid' => $userid, 'courseid' => $courseid, 'categoryid' => $categoryid));
 
     //displays the form
     $mform->display();
+
 }
 
 $gradecount = $renderer->show_grade_count($page, $perpage, $userid, $categoryid, $courseid);
-echo "There are $gradecount data.";
-echo $OUTPUT->paging_bar($gradecount, $page, $perpage, $baseurl);
-echo $renderer->show_grade_table1($page, $perpage, $userid, $categoryid, $courseid);
-echo "<a href=\"pdf.php?userid=$userid&amp;categoryid=$categoryid&amp;courseid=$courseid\">Create pdf from this result</a>";
-echo "<br />";
-echo "<a href=\"upload_file.php\">Upload pdf template file.</a>";
-echo "<br />";
-echo "<a href=\"index.php\">Back to index</a>";
+if (($userid != "") && ($categoryid != "") && ($courseid != "")) {
+    echo "There are $gradecount data.";
+    echo $OUTPUT->paging_bar($gradecount, $page, $perpage, $baseurl);
+    echo $renderer->show_grade_table1($page, $perpage, $userid, $categoryid, $courseid);
+    echo "<a href=\"pdf.php?userid=$userid&amp;categoryid=$categoryid&amp;courseid=$courseid\">Create pdf from this result</a>";
+}
 echo $OUTPUT->footer();

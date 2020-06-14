@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -17,20 +18,13 @@
 /**
  * File containing the general information page.
  *
- * @package     tool_managecourse
+ * @package     tool_eltranscriptprocessor
  * @category    admin
  * @copyright   2020 Shintaro Fujiwara <shintaro dot fujiwara at gmail dot com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
-
-/**
- * Implements the plugin form 
- *
- * @copyright   2020 Shintaro Fujiwara <shintaro dot fujiwara at gmail dot com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 
 require_once("$CFG->libdir/formslib.php");
  
@@ -158,7 +152,8 @@ class select_form extends moodleform {
         $rs = $DB->get_recordset_sql($this->get_users_sql(), array());
 
         $row = array();
-        $row += array(NULL=>get_string('allusers', 'tool_managecourse'));
+        $row += array("-1"=>get_string('selectuser', 'tool_eltranscriptprocessor'));
+        $row += array("0"=>get_string('allusers', 'tool_eltranscriptprocessor'));
         foreach ($rs as $c) {
             $userid = $c->userid;
             $firstname = $c->firstname;
@@ -178,13 +173,14 @@ class select_form extends moodleform {
         $rs = $DB->get_recordset_sql($this->get_course_category_sql(), array());
 
         $row = array();
-        $row += array(NULL=>get_string('allcategories', 'tool_managecourse'));
+        $row += array("-1"=>get_string('selectcategories', 'tool_eltranscriptprocessor'));
+        $row += array("0"=>get_string('allcategories', 'tool_eltranscriptprocessor'));
         foreach ($rs as $c) {
             $categoryid = $c->id;
             $parentid = $c->parent;
             $categoryname = $c->name;
             if ($parentid == 0) {
-                $twoequals = get_string('twoequals', 'tool_managecourse');
+                $twoequals = get_string('twoequals', 'tool_eltranscriptprocessor');
                 $categoryname = $twoequals.$categoryname.$twoequals;
             }
             $row += array("$categoryid"=>"$categoryname");
@@ -202,7 +198,9 @@ class select_form extends moodleform {
         $rs = $DB->get_recordset_sql($this->get_courses_sql($categoryid), array());
 
         $row = array();
-        $row += array(NULL=>get_string('allcourses', 'tool_managecourse'));
+        $row += array("-1"=>get_string('selectcourses', 'tool_eltranscriptprocessor'));
+        //$row += array(NULL=>get_string('allcourses', 'tool_eltranscriptprocessor'));
+        $row += array("0"=>get_string('allcourses', 'tool_eltranscriptprocessor'));
         foreach ($rs as $c) {
             $courseid = $c->courseid;
             $fullname = $c->fullname;
@@ -264,7 +262,7 @@ class select_form extends moodleform {
         $mform->addElement('select', 'type', '', $options, $attributes);
         $mform->addElement('select', 'type2', '', $options2, $attributes);
         $mform->addElement('select', 'type3', '', $options3, $attributes);
-        $this->add_action_buttons(true, get_string('selectuserorcourse', 'tool_managecourse'));
+        $this->add_action_buttons(true, get_string('selectuserorcourse', 'tool_eltranscriptprocessor'));
  
     }
 
