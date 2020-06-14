@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * File containing the general information page.
+ * Serves grade feature.
  *
  * @package     tool_managecourse
  * @category    admin
@@ -81,20 +81,26 @@ function init() {
         $('#id_type2 option[value=-1]').prop('selected', true);
         $('#id_type3 option[value=-1]').prop('selected', true);
     });
-
     // set value to each option if any
     $(function () {
         $('#id_type option[value=$userid]').prop('selected', true);
         $('#id_type2 option[value=$categoryid]').prop('selected', true);
         $('#id_type3 option[value=$courseid]').prop('selected', true);
     });
+    // we want to disable submit button when no user is selected.
+    // or if course is selected and category is not selected.
     $(function () {
-        // we want to disable submit button when no user is selected.
         var useridval = $('#id_type').val();
+        var categoryidval = $('#id_type2').val();
+        var courseidval = $('#id_type3').val();
         if (useridval == -1) {
             $('#id_submitbutton').prop('disabled', true);
         } else {
-            $('#id_submitbutton').prop('disabled', false);
+            if ((courseidval != -1) && (categoryidval == -1)) {
+                $('#id_submitbutton').prop('disabled', true);
+            } else {
+                $('#id_submitbutton').prop('disabled', false);
+            }
         }
     });
     // When a top of the option is selected follow other options 
@@ -150,10 +156,10 @@ function init() {
                     .append(responseText);
                 })
                 $(function () {
-		    $('#id_type3 option[value=-1]').remove();
+                    $('#id_type3 option[value=-1]').remove();
                 })
                 $(function () {
-		    $('#id_type3 option[value=0]').remove();
+                    $('#id_type3 option[value=0]').remove();
                 })
             })
             .fail( function (jqXHR, status, error) {
@@ -233,6 +239,41 @@ if ($mform->is_cancelled()) {
 
     $mform->display();
 
+    echo "
+    <script>
+        $(function () {
+            var categoryidval = $('#id_type2').val();
+            $.ajax({
+                type: 'post',
+                url: 'show_result.php',
+                data: {categoryid:categoryidval},
+                //dataType: 'json',
+            })
+                .done( function (responseText) {           
+                    $('#id_type3').find('option').remove().end();
+                    $(function () {
+                        $('#id_type3')
+                        .append(responseText);
+                    })
+                    $(function () {
+                        $('#id_type3 option[value=-1]').remove();
+                    })
+                    $(function () {
+                        $('#id_type3 option[value=0]').remove();
+                    })
+                })
+                .fail( function (jqXHR, status, error) {
+                    // Triggered if response status code is NOT 200 (OK)
+                    alert(jqXHR.responseText);
+                })
+                .always( function() {
+                    // Always run after .done() or .fail()
+                    //$('p:first').after('<p>Thank you.</p>');
+               })
+        });
+    </script>
+    ";
+
 } else {
     // this branch is executed if the form is submitted but the data doesn't validate and the form should be redisplayed
     // or on the first display of the form.
@@ -249,6 +290,40 @@ if ($mform->is_cancelled()) {
 
     //displays the form
     $mform->display();
+
+    echo "
+    <script>
+        $(function () {
+            $.ajax({
+                type: 'post',
+                url: 'show_result.php',
+                data: {categoryid:$categoryid},
+                //dataType: 'json',
+            })
+                .done( function (responseText) {           
+                    $('#id_type3').find('option').remove().end();
+                    $(function () {
+                        $('#id_type3')
+                        .append(responseText);
+                    })
+                    $(function () {
+                        $('#id_type3 option[value=-1]').remove();
+                    })
+                    $(function () {
+                        $('#id_type3 option[value=0]').remove();
+                    })
+                })
+                .fail( function (jqXHR, status, error) {
+                    // Triggered if response status code is NOT 200 (OK)
+                    alert(jqXHR.responseText);
+                })
+                .always( function() {
+                    // Always run after .done() or .fail()
+                    //$('p:first').after('<p>Thank you.</p>');
+               })
+        });
+    </script>
+    ";
 
 }
 
