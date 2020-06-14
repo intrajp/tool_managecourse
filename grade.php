@@ -81,6 +81,10 @@ function init() {
         $('#id_type2 option[value=-1]').prop('selected', true);
         $('#id_type3 option[value=-1]').prop('selected', true);
     });
+    // first, we let the user and category be selected and hide and courses
+    $(function () {
+        $('#id_type3').find('option').remove().end();
+    });
     // set value to each option if any
     $(function () {
         $('#id_type option[value=$userid]').prop('selected', true);
@@ -95,36 +99,32 @@ function init() {
         var courseidval = $('#id_type3').val();
         if (useridval == -1) {
             $('#id_submitbutton').prop('disabled', true);
-        } else {
-            if ((courseidval != -1) && (categoryidval == -1)) {
-                $('#id_submitbutton').prop('disabled', true);
-            } else {
-                $('#id_submitbutton').prop('disabled', false);
-            }
         }
     });
     // When a top of the option is selected follow other options 
     // When option changed, send userid, categoryid and courseid. 
     $('#id_type').change(function() {
         var useridchanged = $(this).val();
-        var categoryidchanged = $('#id_type2').val();
-        var courseidchanged = $('#id_type3').val();
-        if (useridchanged == -1) {
-            $('#id_type2 option[value=-1]').prop('selected', true);
-            $('#id_type3 option[value=-1]').prop('selected', true);
-        }
-        if (useridchanged == -1) {
-            $('#id_submitbutton').prop('disabled', true);
-        } else {
+        var categoryidval = $('#id_type2').val();
+        var courseidval = $('#id_type3').val();
+        if ((useridchanged != -1) && (categoryidval != -1) && (courseidval != -1)) {
             $('#id_submitbutton').prop('disabled', false);
         }
         $.ajax({
             type: 'post',
             url: 'show_result.php',
-            data: {userid:useridchanged, categoryid:categoryidchanged, courseid:courseidchanged},
+            data: {userid:useridchanged},
             //dataType: 'json',
         })
             .done( function (responseText) {           
+                $(function () {
+                    $('#id_type2').append(responseText);
+                })
+                if (useridchanged == -1) {
+                    $('#id_type2').find('option').remove().end();
+                    $('#id_type3').find('option').remove().end();
+                    $('#id_submitbutton').prop('disabled', true);
+                }
             })
             .fail( function (jqXHR, status, error) {
                 // Triggered if response status code is NOT 200 (OK)
@@ -137,16 +137,15 @@ function init() {
     });
     $('#id_type2').change(function() {
         var categoryidchanged = $(this).val();
-        var useridchanged = $('#id_type').val();
-
-        var courseidchanged = $('#id_type3').val();
+        var useridval = $('#id_type').val();
+        var courseidval = $('#id_type3').val();
         if (categoryidchanged == -1) {
             $('#id_type3 option[value=-1]').prop('selected', true);
         }
         $.ajax({
             type: 'post',
             url: 'show_result.php',
-            data: {userid:useridchanged, categoryid:categoryidchanged, courseid:courseidchanged},
+            data: {categoryid:categoryidchanged},
             //dataType: 'json',
         })
             .done( function (responseText) {           
@@ -161,28 +160,9 @@ function init() {
                 $(function () {
                     $('#id_type3 option[value=0]').remove();
                 })
-            })
-            .fail( function (jqXHR, status, error) {
-                // Triggered if response status code is NOT 200 (OK)
-                alert(jqXHR.responseText);
-            })
-            .always( function() {
-                // Always run after .done() or .fail()
-                //$('p:first').after('<p>Thank you.</p>');
-           })
-    });
-    // last selecttion do nothing
-    $('#id_type3').change(function() {
-        var courseidchanged = $(this).val();
-        var useridchanged = $('#id_type').val();
-        var categoryidchanged = $('#id_type2').val();
-        $.ajax({
-            type: 'post',
-            url: 'show_result.php',
-            data: {userid:useridchanged, categoryid:categoryidchanged, courseid:courseidchanged},
-            //dataType: 'json',
-        })
-            .done( function (responseText) {           
+                if ((useridval != -1) && (categoryidchanged != -1)){
+                    $('#id_submitbutton').prop('disabled', false);
+                }
             })
             .fail( function (jqXHR, status, error) {
                 // Triggered if response status code is NOT 200 (OK)
@@ -231,11 +211,9 @@ if ($mform->is_cancelled()) {
 
 } else if ($fromform = $mform->get_data()) {
 
-    if (($categoryid) && ($courseid)) {
-        if (!$mform->is_course_exists_in_category($categoryid, $courseid)) {
-            $flg_erase = 1;
-        }
-    }
+    $userid = $fromform->type;
+    $categoryid = $fromform->type2;
+    $courseid = $fromform->type3;
 
     $mform->display();
 
@@ -260,6 +238,9 @@ if ($mform->is_cancelled()) {
                     })
                     $(function () {
                         $('#id_type3 option[value=0]').remove();
+                    })
+                    $(function () {
+                        $('#id_type3 option[value=$courseid]').prop('selected', true);
                     })
                 })
                 .fail( function (jqXHR, status, error) {
@@ -311,6 +292,9 @@ if ($mform->is_cancelled()) {
                     })
                     $(function () {
                         $('#id_type3 option[value=0]').remove();
+                    })
+                    $(function () {
+                        $('#id_type3 option[value=$courseid]').prop('selected', true);
                     })
                 })
                 .fail( function (jqXHR, status, error) {

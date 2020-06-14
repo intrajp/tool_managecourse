@@ -48,7 +48,13 @@ $userid  = optional_param('userid', $userid, PARAM_INT);
 $categoryid  = optional_param('categoryid', $categoryid, PARAM_INT);
 $courseid  = optional_param('courseid', $courseid, PARAM_INT);
 
-$row = $mform->get_courses_list($categoryid);
+if($userid >= "-1") {
+    $row = $mform->get_course_category_list();
+}
+
+if($categoryid >= "-1") {
+    $row = $mform->get_courses_list($categoryid);
+}
 
 foreach ($row as $courseid => $course_name) {
     echo "<option value=".$courseid.">" . $course_name . "</option>";
