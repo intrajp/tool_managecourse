@@ -51,3 +51,6 @@ $string['selectuserorcourse'] = 'send';
 $string['uploadpdf'] = 'Upload PDF';
 $string['uploadpdffile'] = 'Upload PDF file';
 $string['uploadpdfsubmit'] = 'Upload PDF template file';
+$string['selectuser'] = '- select user -';
+$string['selectcategories'] = '- select category -';
+$string['selectcourses'] = '- select course -';
