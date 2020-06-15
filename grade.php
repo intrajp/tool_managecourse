@@ -81,7 +81,7 @@ function init() {
         $('#id_type2 option[value=-1]').prop('selected', true);
         $('#id_type3 option[value=-1]').prop('selected', true);
     });
-    // first, we let the user and category be selected and hide and courses
+    // first, we show user and category and hide and courses
     $(function () {
         $('#id_type3').find('option').remove().end();
     });
@@ -92,7 +92,6 @@ function init() {
         $('#id_type3 option[value=$courseid]').prop('selected', true);
     });
     // we want to disable submit button when no user is selected.
-    // or if course is selected and category is not selected.
     $(function () {
         var useridval = $('#id_type').val();
         var categoryidval = $('#id_type2').val();
@@ -101,8 +100,7 @@ function init() {
             $('#id_submitbutton').prop('disabled', true);
         }
     });
-    // When a top of the option is selected follow other options 
-    // When option changed, send userid, categoryid and courseid. 
+    // When user option has changed, get list of categories. 
     $('#id_type').change(function() {
         var useridchanged = $(this).val();
         var categoryidval = $('#id_type2').val();
@@ -135,6 +133,7 @@ function init() {
                })
         }
     });
+    // When category option has changed, get list of courses. 
     $('#id_type2').change(function() {
         var categoryidchanged = $(this).val();
         var useridval = $('#id_type').val();
@@ -156,12 +155,8 @@ function init() {
                 })
                 $(function () {
                     $('#id_type3 option[value=-1]').remove();
-                })
-                $(function () {
                     $('#id_type3 option[value=0]').remove();
-                })
-                // which is a top page
-                $(function () {
+                    // which is a top page
                     $('#id_type3 option[value=1]').remove();
                 })
                 if ((useridval != -1) && (categoryidchanged != -1)){
