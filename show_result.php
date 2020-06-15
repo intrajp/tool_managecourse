@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Returning course list from category id.
+ * Returning category list or course list from categoryid.
  *
  * @package     tool_managecourse
  * @category    admin

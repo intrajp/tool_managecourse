@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * File containing the general information page.
+ * Implements the plugin form 
  *
  * @package     tool_managecourse
  * @category    admin

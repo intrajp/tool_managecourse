@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * File containing the general information page.
+ * Implements the plugin rendering page 
  *
  * @package     tool_managecourse
  * @category    admin
@@ -283,7 +284,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
 
     }
 
-    protected function show_table3_count($page, $perpage, $component, $contextlevel) {
+    public function show_table3_count($page, $perpage, $component, $contextlevel) {
 
         global $DB;
 
