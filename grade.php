@@ -110,30 +110,30 @@ function init() {
         if ((useridchanged != -1) && (categoryidval != -1) && (courseidval != -1)) {
             $('#id_submitbutton').prop('disabled', false);
         }
-        $.ajax({
-            type: 'post',
-            url: 'show_result.php',
-            data: {userid:useridchanged},
-            //dataType: 'json',
-        })
-            .done( function (responseText) {           
-                $(function () {
-                    $('#id_type2').append(responseText);
-                })
-                if (useridchanged == -1) {
+        if (useridchanged == -1) {
+            $.ajax({
+                type: 'post',
+                url: 'show_result.php',
+                data: {userid:useridchanged},
+                //dataType: 'json',
+            })
+                .done( function (responseText) {           
+                    $(function () {
+                        $('#id_type2').append(responseText);
+                    })
                     $('#id_type2').find('option').remove().end();
                     $('#id_type3').find('option').remove().end();
                     $('#id_submitbutton').prop('disabled', true);
-                }
-            })
-            .fail( function (jqXHR, status, error) {
-                // Triggered if response status code is NOT 200 (OK)
-                alert(jqXHR.responseText);
-            })
-            .always( function() {
-                // Always run after .done() or .fail()
-                //$('p:first').after('<p>Thank you.</p>');
-           })
+                })
+                .fail( function (jqXHR, status, error) {
+                    // Triggered if response status code is NOT 200 (OK)
+                    alert(jqXHR.responseText);
+                })
+                .always( function() {
+                    // Always run after .done() or .fail()
+                    //$('p:first').after('<p>Thank you.</p>');
+               })
+        }
     });
     $('#id_type2').change(function() {
         var categoryidchanged = $(this).val();
