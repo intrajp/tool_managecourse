@@ -75,23 +75,29 @@ echo "
 <script>
 window.onload = init;
 function init() {
+    // first we get the value of each option 
+    var useridval = $('#id_type').val();
+    var categoryval = $('#id_type2').val();
+    var courseidval = $('#id_type3').val();
     // if cancel button is clicked set default
     $('#id_cancel').click(function() {
         $('#id_type option[value=-1]').prop('selected', true);
         $('#id_type2 option[value=-1]').prop('selected', true);
         $('#id_type3 option[value=-1]').prop('selected', true);
     });
-    // first, we show user and category and hide and courses
-    $(function () {
-        $('#id_type3').find('option').remove().end();
-    });
+    //  we show user and category hiding courses if user is not selected
+    if (useridval == -1) {
+        $(function () {
+            $('#id_type3').find('option').remove().end();
+        });
+    }
     // set value to each option if any
     $(function () {
         $('#id_type option[value=$userid]').prop('selected', true);
         $('#id_type2 option[value=$categoryid]').prop('selected', true);
         $('#id_type3 option[value=$courseid]').prop('selected', true);
     });
-    // we want to disable submit button when no user is selected.
+    // we want to disable submit button when user is not selected.
     $(function () {
         var useridval = $('#id_type').val();
         var categoryidval = $('#id_type2').val();
