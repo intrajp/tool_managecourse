@@ -155,7 +155,6 @@ function init() {
                 })
                 $(function () {
                     $('#id_type3 option[value=-1]').remove();
-                    $('#id_type3 option[value=0]').remove();
                     // which is a top page
                     $('#id_type3 option[value=1]').remove();
                 })
@@ -234,12 +233,7 @@ if ($mform->is_cancelled()) {
                     })
                     $(function () {
                         $('#id_type3 option[value=-1]').remove();
-                    })
-                    $(function () {
-                        $('#id_type3 option[value=0]').remove();
-                    })
-                    // which is a top page
-                    $(function () {
+                        // which is a top page
                         $('#id_type3 option[value=1]').remove();
                     })
                     $(function () {
@@ -292,12 +286,7 @@ if ($mform->is_cancelled()) {
                     })
                     $(function () {
                         $('#id_type3 option[value=-1]').remove();
-                    })
-                    $(function () {
-                        $('#id_type3 option[value=0]').remove();
-                    })
-                    // which is a top page
-                    $(function () {
+                        // which is a top page
                         $('#id_type3 option[value=1]').remove();
                     })
                     $(function () {
