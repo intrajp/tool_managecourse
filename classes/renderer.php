@@ -182,10 +182,14 @@ class tool_managecourse_renderer extends plugin_renderer_base {
     }
 
     private function grade_sql($userid, $categoryid, $courseid) {
-
+        // for mysql
+        //$VIEW_COLUMNS="m.id as user_enrolments_id, k.name AS categoryname, u.id AS userid, u.firstname,
+        //               u.lastname, e.id enrolid, r.shortname AS rolename, c.fullname,
+        //               FROM_UNIXTIME(c.startdate) AS startdate, FROM_UNIXTIME(c.enddate) AS enddate,
+        //               g.finalgrade, g.rawgrademax";
         $VIEW_COLUMNS="m.id as user_enrolments_id, k.name AS categoryname, u.id AS userid, u.firstname,
                        u.lastname, e.id enrolid, r.shortname AS rolename, c.fullname,
-		       FROM_UNIXTIME(c.startdate) AS startdate, FROM_UNIXTIME(c.enddate) AS enddate,
+		       to_timestamp(c.startdate) AS startdate, to_timestamp(c.enddate) AS enddate,
                        g.finalgrade, g.rawgrademax";
         $FROM_TABLES="FROM {user} u, {user_enrolments} m, {enrol} e, {course} c, {role_assignments} a,
                       {role} r , {grade_items} i, {grade_grades} g, {course_categories} k";
@@ -212,7 +216,8 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         if ($courseid) {
             $CONDITION3 = "AND c.id = $courseid";
         }
-        $GROUP_BY="GROUP BY m.id,u.id";
+        $GROUP_BY="GROUP BY m.id, u.id, e.id, c.id, k.name, r.shortname,
+                   c.fullname, c.startdate, c.enddate, g.finalgrade, g.rawgrademax";
         $ORDER="ORDER BY u.id, c.startdate, m.id, e.id, c.id";
         $DESC="DESC";
         $ASC="ASC";
