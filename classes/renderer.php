@@ -110,7 +110,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         $BIND4 = "m.userid = u.id";
         $BIND5 = "e.courseid = c.id";
         $BIND6 = "c.category = k.id";
-        $GROUP_BY = "GROUP BY c.id, a.roleid, r.id";
+        $GROUP_BY = "GROUP BY c.id, a.roleid, r.id, k.name, u.lastname, u.firstname";
         $DESC = "DESC";
         $ASC = "ASC";
         $ORDER_BY = "ORDER BY c.timecreated $DESC, c.id $ASC, r.id $ASC";
