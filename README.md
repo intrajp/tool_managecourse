@@ -1,5 +1,8 @@
 # managecourse #
 
+## Please note that this program works fine with PostgreSQL now. 
+## Use PostgreSQL which is good in many ways.
+
 Features
 --------
 - Render courses count. 
