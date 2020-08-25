@@ -160,7 +160,9 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         $BIND1 = "f.contextid = x.id";
         $BIND2 = "c.id = x.instanceid";
         $BIND3 = "u.id = f.userid";
-        $GROUP_BY = "GROUP BY f.contextid, x.instanceid";
+        $GROUP_BY = "GROUP BY f.contextid, x.instanceid, f.component, x.contextlevel, u.firstname,
+                     u.lastname, c.fullname, c.shortname, u.firstname, u.lastname, c.fullname,
+                     c.shortname, f.timecreated, f.timemodified";
         $ORDER_FILESIZE = "sum(f.filesize)";
         $ORDER_TIMECREATED = "f.timecreated";
         $ORDER_MODIFIED = "f.timemodified";

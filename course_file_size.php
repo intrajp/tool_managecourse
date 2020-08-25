@@ -88,7 +88,7 @@ foreach ($columns as $column=>$strcolumn) {
 $baseurl = new moodle_url('course_file_size.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
 
 // COMPONENT: backup, course, question
-$component="f.component = \"course\"";
+$component="f.component = 'course'";
 // CONTEXTLEVEL: system:10, user:30, coursecat:40, corse:50, module:70, block:80
 $contextlevel = "x.contextlevel = 50";
 
