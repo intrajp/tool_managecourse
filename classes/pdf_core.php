@@ -40,11 +40,19 @@ class tool_managecourse_pdf {
 //// sqls
 
     private function grade_sql($userid, $categoryid, $courseid) {
+        global $CFG;
 
-        $VIEW_COLUMNS="m.id as user_enrolments_id, k.name AS categoryname, u.id AS userid, u.firstname,
-                       u.lastname, e.id enrolid, r.shortname AS rolename, c.fullname,
-		       to_timestamp(c.startdate) AS startdate, to_timestamp(c.enddate) AS enddate,
-                       g.finalgrade, g.rawgrademax";
+        if ($CFG->dbtype == 'pgsql') {
+            $VIEW_COLUMNS="m.id as user_enrolments_id, k.name AS categoryname, u.id AS userid, u.firstname,
+                           u.lastname, e.id enrolid, r.shortname AS rolename, c.fullname,
+                           to_timestamp(c.startdate) AS startdate, to_timestamp(c.enddate) AS enddate,
+                           g.finalgrade, g.rawgrademax";
+        } else {
+            $VIEW_COLUMNS="m.id as user_enrolments_id, k.name AS categoryname, u.id AS userid, u.firstname,
+                           u.lastname, e.id enrolid, r.shortname AS rolename, c.fullname,
+                           FROM_UNIXTIME(c.startdate, '%Y/%m/%d') AS startdate, FROM_UNIXTIME(c.enddate, '%Y/%m/%d') AS enddate,
+                           g.finalgrade, g.rawgrademax";
+        }
         $FROM_TABLES="FROM {user} u, {user_enrolments} m, {enrol} e, {course} c, {role_assignments} a,
                       {role} r , {grade_items} i, {grade_grades} g, {course_categories} k";
         $WHERE="";
