@@ -125,7 +125,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
 
     private function teacher_enroled_to_course_sql_count() {
 
-        $VIEW_COLUMNS = "DISTINCT c.id as courseid";
+        $VIEW_COLUMNS = "DISTINCT c.id as courseid, c.timecreated, r.id";
         $FROM_TABLES = "FROM {user_enrolments} m, {role_assignments} a, {user} u, {enrol} e,
                             {course} c, {role} r, {course_categories} k";
         $BIND1 = "m.enrolid = e.id";
