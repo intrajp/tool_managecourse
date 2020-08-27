@@ -98,10 +98,17 @@ class select_form extends moodleform {
 
     private function get_course_category_sql() {
 
-        $sql = "WITH RECURSIVE category_path (id, parent, name, path) AS
-                (SELECT id, parent, name, CAST(name AS TEXT) as path FROM {course_categories} WHERE parent=0 UNION ALL
-                SELECT k.id, k.parent, k.name, CONCAT(cp.path, '>', k.name) FROM category_path AS cp
-                JOIN {course_categories} AS k ON cp.id = k.parent) SELECT * FROM category_path ORDER BY path";
+        if ($CFG->dbtype == 'pgsql') {
+            $sql = "WITH RECURSIVE category_path (id, parent, name, path) AS
+                    (SELECT id, parent, name, CAST(name AS TEXT) as path FROM {course_categories} WHERE parent=0 UNION ALL
+                    SELECT k.id, k.parent, k.name, CONCAT(cp.path, '>', k.name) FROM category_path AS cp
+                    JOIN {course_categories} AS k ON cp.id = k.parent) SELECT * FROM category_path ORDER BY path";
+        } else {
+            $sql = "WITH RECURSIVE category_path (id, parent, name, path) AS
+                    (SELECT id, parent, name, name as path FROM {course_categories} WHERE parent=0 UNION ALL
+                    SELECT k.id, k.parent, k.name, CONCAT(cp.path, '>', k.name) FROM category_path AS cp
+                    JOIN {course_categories} AS k ON cp.id = k.parent) SELECT * FROM category_path ORDER BY path";
+        }
 
         return $sql;
 
