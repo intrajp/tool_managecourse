@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -222,6 +221,8 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         if ($courseid) {
             $CONDITION3 = "AND c.id = $courseid";
         }
+	$CONDITION4 = "AND g.finalgrade >= 0";
+
         $GROUP_BY="GROUP BY m.id, u.id, e.id, c.id, k.name, r.shortname,
                    c.fullname, c.startdate, c.enddate, g.finalgrade, g.rawgrademax";
         $ORDER="ORDER BY u.id, c.startdate, m.id, e.id, c.id";
@@ -235,7 +236,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         $sql="SELECT ${VIEW_COLUMNS} ${FROM_TABLES} WHERE ${BIND1} AND ${BIND2}
                   AND ${BIND3} AND ${BIND4} AND ${BIND5} AND ${BIND6}
 		  AND ${BIND7} AND ${BIND8} AND ${BIND9} ${CONDITION1} ${CONDITION2}
-                  ${CONDITION3} ${GROUP_BY} ${ORDER}";
+                  ${CONDITION3} ${CONDITION4} ${GROUP_BY} ${ORDER}";
 
         return $sql;
     }

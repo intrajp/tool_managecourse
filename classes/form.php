@@ -98,6 +98,8 @@ class select_form extends moodleform {
 
     private function get_course_category_sql() {
 
+        global $CFG;
+
         if ($CFG->dbtype == 'pgsql') {
             $sql = "WITH RECURSIVE category_path (id, parent, name, path) AS
                     (SELECT id, parent, name, CAST(name AS TEXT) as path FROM {course_categories} WHERE parent=0 UNION ALL
