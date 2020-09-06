@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -96,6 +95,6 @@ $coursescount = $renderer->show_table3_count($page, $perpage, $component, $conte
 echo $OUTPUT->paging_bar($coursescount, $page, $perpage, $baseurl);
 echo $renderer->show_table3($page, $perpage, $component, $contextlevel);
 
-echo "<a href=\"index.php\">back to index</a>";
+echo $OUTPUT->single_button(new moodle_url('/admin/tool/managecourse/index.php'), get_string('backtoindex', 'tool_managecourse'));
 
 echo $OUTPUT->footer();

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -42,9 +41,9 @@ $userid = NULL;
 $categoryid = NULL;
 $courseid = NULL;
 
-$userid = $_GET['userid'];
-$categoryid = $_GET['categoryid'];
-$courseid = $_GET['courseid'];
+$userid = $_POST['userid'];
+$categoryid = $_POST['categoryid'];
+$courseid = $_POST['courseid'];
 
 if ((!$userid) && (!$categoryid) && (!$courseid)) {
     throw new moodle_exception('Please select a user');

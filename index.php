@@ -92,7 +92,7 @@ echo "Showing ".$count2_redundant." rudundant (".$count2_actual." actual) course
 echo $OUTPUT->paging_bar($count2_redundant, $page, $perpage, $baseurl);
 echo $renderer->show_table2($page, $perpage);
 
-echo "<a href=\"course_file_size.php\">course file size</a>    ";
-echo "<a href=\"grade.php\">grades</a>";
+echo $OUTPUT->single_button(new moodle_url('/admin/tool/managecourse/course_file_size.php'), get_string('coursefilesize', 'tool_managecourse'));
+echo $OUTPUT->single_button(new moodle_url('/admin/tool/managecourse/grade.php'), get_string('coursegrades', 'tool_managecourse'));
 
 echo $OUTPUT->footer();

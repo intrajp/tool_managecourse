@@ -205,8 +205,7 @@ $baseurl = new moodle_url('grade.php', array('sort' => $sort, 'dir' => $dir, 'pe
        	                      'userid' => $userid, 'courseid' => $courseid, 'categoryid' => $categoryid));
 $returnurl = new moodle_url('/admin/tool/managecourse/grade.php');
 
-echo "<br />";
-echo "<a href=\"upload_file.php\">Upload pdf template file.</a>";
+echo $OUTPUT->single_button(new moodle_url('/admin/tool/managecourse/upload_file.php'), get_string('uploadpdffile', 'tool_managecourse'));
 
 //Form processing and displaying is done here
 if ($mform->is_cancelled()) {
@@ -318,6 +317,9 @@ if (($userid != "") && ($categoryid != "") && ($courseid != "")) {
     echo "There are $gradecount data.";
     echo $OUTPUT->paging_bar($gradecount, $page, $perpage, $baseurl);
     echo $renderer->show_grade_table1($page, $perpage, $userid, $categoryid, $courseid);
-    echo "<a href=\"pdf.php?userid=$userid&amp;categoryid=$categoryid&amp;courseid=$courseid\">Create pdf from this result</a>";
+    echo $OUTPUT->single_button(new moodle_url('/admin/tool/managecourse/pdf.php',
+            array('userid'=>$userid, 'categoryid'=>$categoryid, 'courseid'=>$courseid)),
+            get_string('createpdffromthisresult', 'tool_managecourse'));
 }
+echo $OUTPUT->single_button(new moodle_url('/admin/tool/managecourse/index.php'), get_string('backtoindex', 'tool_managecourse'));
 echo $OUTPUT->footer();
