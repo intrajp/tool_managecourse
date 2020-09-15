@@ -60,3 +60,4 @@ $string['selectuser'] = '- select user -';
 $string['selectcategories'] = '- select category -';
 $string['createpdffromthisresult'] = 'Create pdf from this result';
 $string['selectcourses'] = '';
+$string['permcheck'] = '';
