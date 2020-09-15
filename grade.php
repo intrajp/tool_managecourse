@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -261,15 +260,6 @@ if ($mform->is_cancelled()) {
     // this branch is executed if the form is submitted but the data doesn't validate and the form should be redisplayed
     // or on the first display of the form.
     // here, we are using this branch as pagenation goes.
-
-    $userid = $_GET['userid'];
-    $categoryid = $_GET['categoryid'];
-    $courseid = $_GET['courseid'];
-    $perpage = $_GET['perpage'];
-    $page = $_GET['page'];
-
-    $baseurl = new moodle_url('grade.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage,
-                                  'userid' => $userid, 'courseid' => $courseid, 'categoryid' => $categoryid));
 
     //displays the form
     $mform->display();
