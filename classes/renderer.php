@@ -226,6 +226,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         $GROUP_BY="GROUP BY m.id, u.id, e.id, c.id, k.name, r.shortname,
                    c.fullname, c.startdate, c.enddate, g.finalgrade, g.rawgrademax";
         $ORDER="ORDER BY u.id, c.startdate, m.id, e.id, c.id";
+        $ORDER="";
         $DESC="DESC";
         $ASC="ASC";
         $FORMAT_NORMAL=";";
@@ -473,6 +474,8 @@ class tool_managecourse_renderer extends plugin_renderer_base {
             get_string('enddate', 'tool_managecourse'),
             get_string('finalgrade', 'tool_managecourse'),
             get_string('rawgrademax', 'tool_managecourse'),
+	    get_string('user_enrolments_id', 'tool_managecourse'),
+	    get_string('enrolid', 'tool_managecourse'),
         ];
         $table->id = 'courses4';
         $table->attributes['class'] = 'admintable generaltable';
@@ -489,6 +492,8 @@ class tool_managecourse_renderer extends plugin_renderer_base {
             $row[] = $c->enddate;
             $row[] = $c->finalgrade;
             $row[] = $c->rawgrademax;
+            $row[] = $c->user_enrolments_id;
+            $row[] = $c->enrolid;
 
             $table->data[] = $row;
         }

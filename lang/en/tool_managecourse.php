@@ -61,3 +61,5 @@ $string['selectcategories'] = '- select category -';
 $string['createpdffromthisresult'] = 'Create pdf from this result';
 $string['selectcourses'] = '';
 $string['permcheck'] = '';
+$string['user_enrolments_id'] = 'user_enrolments_id';
+$string['enrolid'] = 'enrolid';
