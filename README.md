@@ -5,6 +5,7 @@
 
 Features
 --------
+- Render category list.
 - Render courses count. 
 - Render courses count in hour, day, week and month.
 - Render course names which has enrol as manager, coursecreator, editingteacher or teacher role order by timecreated DESC.
