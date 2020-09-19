@@ -236,7 +236,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
 
         $sql="SELECT ${VIEW_COLUMNS} ${FROM_TABLES} WHERE ${BIND1} AND ${BIND2}
                   AND ${BIND3} AND ${BIND4} AND ${BIND5} AND ${BIND6}
-		  AND ${BIND7} AND ${BIND8} AND ${BIND9} ${CONDITION1} ${CONDITION2}
+                  AND ${BIND7} AND ${BIND8} AND ${BIND9} ${CONDITION1} ${CONDITION2}
                   ${CONDITION3} ${CONDITION4} ${GROUP_BY} ${ORDER}";
 
         return $sql;

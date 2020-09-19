@@ -28,6 +28,67 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/formslib.php");
  
+class category_list_form extends moodleform {
+
+    private function get_course_category_sql() {
+
+        global $CFG;
+
+        if ($CFG->dbtype == 'pgsql') {
+            $sql = "WITH RECURSIVE category_path (id, parent, name, path) AS
+                    (SELECT id, parent, name, CAST(name AS TEXT) as path FROM {course_categories} WHERE parent=0 UNION ALL
+                    SELECT k.id, k.parent, k.name, CONCAT(cp.path, '>', k.name) FROM category_path AS cp
+                    JOIN {course_categories} AS k ON cp.id = k.parent) SELECT * FROM category_path ORDER BY path";
+        } else {
+            $sql = "WITH RECURSIVE category_path (id, parent, name, path) AS
+                    (SELECT id, parent, name, name as path FROM {course_categories} WHERE parent=0 UNION ALL
+                    SELECT k.id, k.parent, k.name, CONCAT(cp.path, '>', k.name) FROM category_path AS cp
+                    JOIN {course_categories} AS k ON cp.id = k.parent) SELECT * FROM category_path ORDER BY path";
+        }
+
+        return $sql;
+
+    }
+
+    public function get_course_category_list() {
+
+        global $DB;
+
+        $rs = $DB->get_recordset_sql($this->get_course_category_sql(), array());
+
+        $path_str = "";
+
+        foreach ($rs as $c) {
+            $path = $c->path;
+            $path_str .= $path."<br />";
+        }
+        $rs->close();
+
+        return $path_str;
+
+    }
+
+    //Add elements to form
+    public function definition() {
+
+        global $CFG;
+ 
+        $mform = $this->_form;
+        $options = $this->get_course_category_list();
+        $attributes = NULL;
+        $mform->addElement('static', 'type', '', $options, $attributes);
+ 
+    }
+
+    //Custom validation should be added here
+    function validation($data, $files) {
+
+        return array();
+
+    }
+
+}
+
 class select_form extends moodleform {
 
     // properties
@@ -280,4 +341,5 @@ class select_form extends moodleform {
         return array();
 
     }
+
 }

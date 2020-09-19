@@ -43,6 +43,11 @@ require_login();
 
 admin_externalpage_setup('tool_managecourse');
 
+admin_externalpage_setup('admins');
+if (!is_siteadmin()) {
+    die;
+}
+
 $url = new moodle_url('/admin/tool/managecourse/grade.php');
 $PAGE->set_url($url);
 $PAGE->set_title(get_string('managecourse', 'tool_managecourse'));

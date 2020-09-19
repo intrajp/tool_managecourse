@@ -37,6 +37,11 @@ require_login();
 
 admin_externalpage_setup('tool_managecourse');
 
+admin_externalpage_setup('admins');
+if (!is_siteadmin()) {
+    die;
+}
+
 $url = new moodle_url('/admin/tool/managecourse/index.php');
 $PAGE->set_url($url);
 $PAGE->set_title(get_string('managecourse', 'tool_managecourse'));
@@ -92,6 +97,7 @@ echo "Showing ".$count2_redundant." rudundant (".$count2_actual." actual) course
 echo $OUTPUT->paging_bar($count2_redundant, $page, $perpage, $baseurl);
 echo $renderer->show_table2($page, $perpage);
 
+echo $OUTPUT->single_button(new moodle_url('/admin/tool/managecourse/category_list.php'), get_string('categorylist', 'tool_managecourse'));
 echo $OUTPUT->single_button(new moodle_url('/admin/tool/managecourse/course_file_size.php'), get_string('coursefilesize', 'tool_managecourse'));
 echo $OUTPUT->single_button(new moodle_url('/admin/tool/managecourse/grade.php'), get_string('coursegrades', 'tool_managecourse'));
 
