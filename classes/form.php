@@ -30,6 +30,8 @@ require_once("$CFG->libdir/formslib.php");
  
 class category_list_form extends moodleform {
 
+    //sqls
+    
     private function get_course_category_sql() {
 
         global $CFG;
@@ -50,6 +52,27 @@ class category_list_form extends moodleform {
 
     }
 
+    private function get_courses_sql($categoryid) {
+
+        $VIEW_COLUMNS = "c.id as courseid, c.fullname";
+        $FROM_TABLES = "FROM {course} c";
+        if ($categoryid != NULL) {
+            $WHERE = "WHERE c.category = $categoryid";
+        } else {
+            $WHERE = "";
+        }
+        $DESC = "DESC";
+        $ASC = "ASC";
+        $ORDER_BY = "ORDER BY c.id $ASC";
+
+        $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} ${WHERE} ${ORDER_BY}";
+
+        return $sql;
+
+    }
+
+    // methods
+    
     public function get_course_category_list() {
 
         global $DB;
@@ -57,14 +80,39 @@ class category_list_form extends moodleform {
         $rs = $DB->get_recordset_sql($this->get_course_category_sql(), array());
 
         $path_str = "";
+        $fullname = "";
 
         foreach ($rs as $c) {
+            $id = $c->id;
             $path = $c->path;
-            $path_str .= $path."<br />";
+            $path_str .= "<b>".$path."</b><br />";
+            $fullname = $this->get_courses_list($id);
+            if ($fullname) {
+                $path_str .= $fullname."<br />";
+            }
         }
         $rs->close();
 
         return $path_str;
+
+    }
+
+    public function get_courses_list($categoryid) {
+
+        global $DB;
+
+        $rs = $DB->get_recordset_sql($this->get_courses_sql($categoryid), array());
+
+        $fullname = "";
+        $fullname_str = "";
+
+        foreach ($rs as $c) {
+            $fullname = $c->fullname;
+            $fullname_str .= $fullname."<br />";
+        }
+        $rs->close();
+
+        return $fullname_str;
 
     }
 
@@ -73,6 +121,8 @@ class category_list_form extends moodleform {
 
         global $CFG;
  
+        $showcourse = NULL;
+
         $mform = $this->_form;
         $options = $this->get_course_category_list();
         $attributes = NULL;

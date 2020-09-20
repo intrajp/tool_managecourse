@@ -53,6 +53,7 @@ echo $OUTPUT->header();
 $baseurl = new moodle_url('category_list.php', NULL);
 
 $mform = NULL;
+$showcourse = NULL;
 if (!$mform) {
     $mform = new category_list_form();
 }

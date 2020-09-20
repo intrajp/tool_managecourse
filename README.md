@@ -5,10 +5,10 @@
 
 Features
 --------
-- Render category list.
 - Render courses count. 
 - Render courses count in hour, day, week and month.
 - Render course names which has enrol as manager, coursecreator, editingteacher or teacher role order by timecreated DESC.
+- Render all category and courses. 
 - Render course file size order by DESC.
 - Render all grades order by userid ASC.
 - Render grades of user(s) selected by user name, category name and course name ASC.
