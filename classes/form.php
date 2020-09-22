@@ -109,7 +109,7 @@ class category_list_form extends moodleform {
         foreach ($rs as $c) {
             $courseid = $c->courseid;
             $fullname = $c->fullname;
-            $fullname_str .= "<button data-filtro='$courseid'>".$fullname."</button>";
+            $fullname_str .= "<button data-filtro='$courseid'>".$fullname."</button><br />";
         }
         $rs->close();
 
