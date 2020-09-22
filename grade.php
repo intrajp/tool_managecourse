@@ -23,6 +23,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace  tool_managecourse;
+
 require(__DIR__.'/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/moodlelib.php');
@@ -32,10 +34,10 @@ require_once($CFG->libdir . '/pagelib.php');
 global $PAGE;
 
 // including custom js file
-$PAGE->requires->js(new moodle_url($CFG->wwwroot . '/admin/tool/managecourse/js/jQuery-3.5.1.min.js'));
+$PAGE->requires->js(new \moodle_url($CFG->wwwroot . '/admin/tool/managecourse/js/jQuery-3.5.1.min.js'));
 
 if (isguestuser()) {
-    throw new require_login_exception('Guests are not allowed here.');
+    throw new \require_login_exception('Guests are not allowed here.');
 }
 
 // This is a system level page that operates on other contexts.
@@ -48,7 +50,7 @@ if (!is_siteadmin()) {
     die;
 }
 
-$url = new moodle_url('/admin/tool/managecourse/grade.php');
+$url = new \moodle_url('/admin/tool/managecourse/grade.php');
 $PAGE->set_url($url);
 $PAGE->set_title(get_string('managecourse', 'tool_managecourse'));
 $PAGE->set_heading(get_string('managecourse', 'tool_managecourse'));
@@ -59,7 +61,7 @@ echo $OUTPUT->header();
 
 $mform = NULL;
 if (!$mform) {
-    $mform = new select_form();
+    $mform = new \select_form();
 }
 
 $userid = NULL;
@@ -205,11 +207,11 @@ if ($fromform) {
 }
 
 // rebase is needed shomehow here
-$baseurl = new moodle_url('grade.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage,
+$baseurl = new \moodle_url('grade.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage,
        	                      'userid' => $userid, 'courseid' => $courseid, 'categoryid' => $categoryid));
-$returnurl = new moodle_url('/admin/tool/managecourse/grade.php');
+$returnurl = new \moodle_url('/admin/tool/managecourse/grade.php');
 
-echo $OUTPUT->single_button(new moodle_url('/admin/tool/managecourse/upload_file.php'), get_string('uploadpdffile', 'tool_managecourse'));
+echo $OUTPUT->single_button(new \moodle_url('/admin/tool/managecourse/upload_file.php'), get_string('uploadpdffile', 'tool_managecourse'));
 
 //Form processing and displaying is done here
 if ($mform->is_cancelled()) {
@@ -312,9 +314,9 @@ if (($userid != "") && ($categoryid != "") && ($courseid != "")) {
     echo "There are $gradecount data.";
     echo $OUTPUT->paging_bar($gradecount, $page, $perpage, $baseurl);
     echo $renderer->show_grade_table1($page, $perpage, $userid, $categoryid, $courseid);
-    echo $OUTPUT->single_button(new moodle_url('/admin/tool/managecourse/pdf.php',
+    echo $OUTPUT->single_button(new \moodle_url('/admin/tool/managecourse/pdf.php',
             array('userid'=>$userid, 'categoryid'=>$categoryid, 'courseid'=>$courseid)),
             get_string('createpdffromthisresult', 'tool_managecourse'));
 }
-echo $OUTPUT->single_button(new moodle_url('/admin/tool/managecourse/index.php'), get_string('backtoindex', 'tool_managecourse'));
+echo $OUTPUT->single_button(new \moodle_url('/admin/tool/managecourse/index.php'), get_string('backtoindex', 'tool_managecourse'));
 echo $OUTPUT->footer();

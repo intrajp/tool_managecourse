@@ -23,13 +23,15 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace  tool_managecourse;
+
 require(__DIR__.'/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/moodlelib.php');
 require_once($CFG->dirroot.'/admin/tool/managecourse/classes/pdf_core.php');
 
 if (isguestuser()) {
-    throw new require_login_exception('Guests are not allowed here.');
+    throw new \require_login_exception('Guests are not allowed here.');
 }
 
 // This is a system level page that operates on other contexts.
@@ -46,11 +48,11 @@ $categoryid = $_POST['categoryid'];
 $courseid = $_POST['courseid'];
 
 if ((!$userid) && (!$categoryid) && (!$courseid)) {
-    throw new moodle_exception('Please select a user');
+    throw new \moodle_exception('Please select a user');
 }
 
 if (!$userid) {
-    throw new moodle_exception('Please select a user');
+    throw new \moodle_exception('Please select a user');
 }
 
 // Include the main TCPDF library (search for installation path).
@@ -58,7 +60,7 @@ if (!$userid) {
 require_once($CFG->libdir.'/tcpdf/tcpdf.php');
 
 // create new PDF document
-$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+$pdf = new \TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
 // set document information
 $pdf->SetCreator(PDF_CREATOR);
@@ -114,7 +116,7 @@ $pdf->AddPage();
 // set text shadow effect
 //$pdf->setTextShadow(array('enabled'=>true, 'depth_w'=>0.2, 'depth_h'=>0.2, 'color'=>array(196,196,196), 'opacity'=>1, 'blend_mode'=>'Normal'));
 
-$pdf_core = new tool_managecourse_pdf();
+$pdf_core = new \tool_managecourse_pdf();
 $grade_result = $pdf_core->render_grade_pdf($userid, $categoryid, $courseid);
 
 $record = explode("%",$grade_result[0]);

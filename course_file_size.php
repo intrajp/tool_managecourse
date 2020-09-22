@@ -23,13 +23,15 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace  tool_managecourse;
+
 require(__DIR__.'/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/moodlelib.php');
 require_once($CFG->dirroot.'/admin/tool/managecourse/classes/renderer.php');
 
 if (isguestuser()) {
-    throw new require_login_exception('Guests are not allowed here.');
+    throw new \require_login_exception('Guests are not allowed here.');
 }
 
 // This is a system level page that operates on other contexts.
@@ -42,12 +44,12 @@ if (!is_siteadmin()) {
     die;
 }
 
-$url = new moodle_url('/admin/tool/managecourse/index.php');
+$url = new \moodle_url('/admin/tool/managecourse/index.php');
 $PAGE->set_url($url);
 $PAGE->set_title(get_string('managecourse', 'tool_managecourse'));
 $PAGE->set_heading(get_string('managecourse', 'tool_managecourse'));
 
-$returnurl = new moodle_url('/admin/tool/managecourse/course_file_size.php');
+$returnurl = new \moodle_url('/admin/tool/managecourse/course_file_size.php');
 $renderer = $PAGE->get_renderer('tool_managecourse');
 
 echo $OUTPUT->header();
@@ -89,7 +91,7 @@ foreach ($columns as $column=>$strcolumn) {
     $hcolumns[$column] = "<a href=\"course_file_size.php?sort=$column&amp;dir=$columndir&amp;page=$page&amp;perpage=$perpage\">".$strcolumn."</a>$columnicon";
 }
 
-$baseurl = new moodle_url('course_file_size.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
+$baseurl = new \moodle_url('course_file_size.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
 
 // COMPONENT: backup, course, question
 $component="f.component = 'course'";
@@ -100,6 +102,6 @@ $coursescount = $renderer->show_table3_count($page, $perpage, $component, $conte
 echo $OUTPUT->paging_bar($coursescount, $page, $perpage, $baseurl);
 echo $renderer->show_table3($page, $perpage, $component, $contextlevel);
 
-echo $OUTPUT->single_button(new moodle_url('/admin/tool/managecourse/index.php'), get_string('backtoindex', 'tool_managecourse'));
+echo $OUTPUT->single_button(new \moodle_url('/admin/tool/managecourse/index.php'), get_string('backtoindex', 'tool_managecourse'));
 
 echo $OUTPUT->footer();

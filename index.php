@@ -23,13 +23,15 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace  tool_managecourse;
+
 require(__DIR__.'/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/moodlelib.php');
 require_once($CFG->dirroot.'/admin/tool/managecourse/classes/renderer.php');
 
 if (isguestuser()) {
-    throw new require_login_exception('Guests are not allowed here.');
+    throw new \require_login_exception('Guests are not allowed here.');
 }
 
 // This is a system level page that operates on other contexts.
@@ -42,12 +44,12 @@ if (!is_siteadmin()) {
     die;
 }
 
-$url = new moodle_url('/admin/tool/managecourse/index.php');
+$url = new \moodle_url('/admin/tool/managecourse/index.php');
 $PAGE->set_url($url);
 $PAGE->set_title(get_string('managecourse', 'tool_managecourse'));
 $PAGE->set_heading(get_string('managecourse', 'tool_managecourse'));
 
-$returnurl = new moodle_url('/admin/tool/managecourse/index.php');
+$returnurl = new \moodle_url('/admin/tool/managecourse/index.php');
 $renderer = $PAGE->get_renderer('tool_managecourse');
 
 echo $OUTPUT->header();
@@ -90,15 +92,15 @@ foreach ($columns as $column=>$strcolumn) {
     $hcolumns[$column] = "<a href=\"index.php?sort=$column&amp;dir=$columndir&amp;page=$page&amp;perpage=$perpage\">".$strcolumn."</a>$columnicon";
 }
 
-$baseurl = new moodle_url('index.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
+$baseurl = new \moodle_url('index.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
 $count2_actual = $renderer->show_table2_count();
 $count2_redundant = $renderer->show_table2_count_redundant();
 echo "Showing ".$count2_redundant." rudundant (".$count2_actual." actual) courses which has enrol as manager, coursecreator, editingteacher or teacher role.";
 echo $OUTPUT->paging_bar($count2_redundant, $page, $perpage, $baseurl);
 echo $renderer->show_table2($page, $perpage);
 
-echo $OUTPUT->single_button(new moodle_url('/admin/tool/managecourse/category_list.php'), get_string('categorycourselist', 'tool_managecourse'));
-echo $OUTPUT->single_button(new moodle_url('/admin/tool/managecourse/course_file_size.php'), get_string('coursefilesize', 'tool_managecourse'));
-echo $OUTPUT->single_button(new moodle_url('/admin/tool/managecourse/grade.php'), get_string('coursegrades', 'tool_managecourse'));
+echo $OUTPUT->single_button(new \moodle_url('/admin/tool/managecourse/category_list.php'), get_string('categorycourselist', 'tool_managecourse'));
+echo $OUTPUT->single_button(new \moodle_url('/admin/tool/managecourse/course_file_size.php'), get_string('coursefilesize', 'tool_managecourse'));
+echo $OUTPUT->single_button(new \moodle_url('/admin/tool/managecourse/grade.php'), get_string('coursegrades', 'tool_managecourse'));
 
 echo $OUTPUT->footer();

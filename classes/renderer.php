@@ -242,6 +242,23 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         return $sql;
     }
 
+    private function get_course_forum_sql($courseid) {
+
+        $VIEW_COLUMNS = "f.name as forumname";
+        $FROM_TABLES = "FROM {forum} f";
+        $WHERE = "WHERE f.course = $courseid";
+        $CONDITION1 = "type='news'";
+        $DESC = "DESC";
+        $ASC = "ASC";
+        $ORDER_BY = "ORDER BY f.id $ASC";
+        $LIMIT = "limit 5";
+
+        $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} ${WHERE} AND ${CONDITION1} ${ORDER_BY} ${LIMIT}";
+
+        return $sql;
+
+    }
+
 //// methods
 
     protected function get_course_count() {
@@ -319,6 +336,24 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         $counts = count($records);
 
 	return $counts;
+
+    }
+
+    public function get_course_forum($courseid) {
+
+        global $DB;
+
+        $rs = $DB->get_recordset_sql($this->get_course_forum_sql($coursetid), array());
+
+        $row = array();
+        foreach ($rs as $c) {
+            $forumid = $c->id;
+            $forumname = $c->forumname;
+            $row += array("$forumid"=>"$forumname");
+        }
+        $rs->close();
+
+        return $row;
 
     }
 

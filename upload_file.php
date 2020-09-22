@@ -24,6 +24,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+//namespace  tool_managecourse;
+
 require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/moodlelib.php');
@@ -34,7 +36,7 @@ require_once($CFG->libdir . '/pagelib.php');
 global $PAGE;
 
 if (isguestuser()) {
-    throw new require_login_exception('Guests are not allowed here.');
+    throw new \require_login_exception('Guests are not allowed here.');
 }
 
 // This is a system level page that operates on other contexts.
@@ -44,12 +46,12 @@ admin_externalpage_setup('tool_managecourse');
 
 $uploader = tool_managecourse_uploader::instance();
 
-$url = new moodle_url('/admin/tool/managecourse/upload_file.php');
+$url = new \moodle_url('/admin/tool/managecourse/upload_file.php');
 $PAGE->set_url($url);
 $PAGE->set_title(get_string('managecourse', 'tool_managecourse'));
 $PAGE->set_heading(get_string('managecourse', 'tool_managecourse'));
 
-$returnurl = new moodle_url('/admin/tool/managecourse/index.php');
+$returnurl = new \moodle_url('/admin/tool/managecourse/index.php');
 $renderer = $PAGE->get_renderer('tool_managecourse');
 
 echo $OUTPUT->header();

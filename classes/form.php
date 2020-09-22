@@ -85,10 +85,10 @@ class category_list_form extends moodleform {
         foreach ($rs as $c) {
             $id = $c->id;
             $path = $c->path;
-            $path_str .= "<b>".$path."</b><br />";
+            $path_str .= "<div id='category'>".$path."</div>";
             $fullname = $this->get_courses_list($id);
             if ($fullname) {
-                $path_str .= $fullname."<br />";
+                $path_str .= $fullname;
             }
         }
         $rs->close();
@@ -107,8 +107,9 @@ class category_list_form extends moodleform {
         $fullname_str = "";
 
         foreach ($rs as $c) {
+            $courseid = $c->courseid;
             $fullname = $c->fullname;
-            $fullname_str .= $fullname."<br />";
+            $fullname_str .= "<button data-filtro='$courseid'>".$fullname."</button>";
         }
         $rs->close();
 
