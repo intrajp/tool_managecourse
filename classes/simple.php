@@ -50,19 +50,112 @@ class intrajp_simple {
 
     }
 
+    private function get_course_role_assignments_sql($courseid) {
+
+        $VIEW_COLUMNS = "ra.id as id, c.id as contextid, r.id as roleid, r.shortname";
+        $FROM_TABLES = "FROM {role} r, {role_assignments} ra, {context} c, {course} co";
+        $WHERE = "WHERE co.id = $courseid";
+	$CONDITION1 = "ra.roleid = r.id";
+	$CONDITION2 = "ra.contextid = c.id";
+	$CONDITION3 = "co.id = c.instanceid";
+        $DESC = "DESC";
+        $ASC = "ASC";
+        $ORDER_BY = "ORDER BY id, roleid";
+        $LIMIT = "";
+
+        $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} ${WHERE} AND
+                ${CONDITION1} AND ${CONDITION2} AND ${CONDITION3} ${ORDER_BY} ${LIMIT}";
+
+        return $sql;
+
+    }
+
+    private function get_course_enrol_methods_sql($courseid) {
+
+        $VIEW_COLUMNS = "id, enrol";
+        $FROM_TABLES = "FROM {enrol}";
+        $WHERE = "WHERE courseid = $courseid";
+        $CONDITION1 = "status = 0";
+        $DESC = "DESC";
+        $ASC = "ASC";
+        $ORDER_BY = "";
+        $LIMIT = "";
+
+        $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} ${WHERE} AND
+                ${CONDITION1} ${ORDER_BY} ${LIMIT}";
+
+        return $sql;
+
+    }
+
+    private function get_course_module_names_sql($courseid) {
+
+        $VIEW_COLUMNS = "DISTINCT cm.id AS id, m.name AS modulename";
+        $FROM_TABLES = "FROM {course} c, {course_modules} cm, {modules} m";
+        $WHERE = "WHERE c.id = $courseid";
+        $CONDITION1 = "c.id = cm.course";
+        $CONDITION2 = "cm.module = m.id";
+        $DESC = "DESC";
+        $ASC = "ASC";
+        $ORDER_BY = "";
+        $LIMIT = "";
+
+        $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} ${WHERE} AND
+                ${CONDITION1} AND ${CONDITION2} ${ORDER_BY} ${LIMIT}";
+
+        return $sql;
+
+    }
+
 //// methods
 
-    public function get_course_forum($courseid) {
+    public function get_course_role_assignments($courseid) {
 
         global $DB;
 
-        $rs = $DB->get_recordset_sql($this->get_course_forum_sql($courseid), array());
+        $rs = $DB->get_recordset_sql($this->get_course_role_assignments_sql($courseid), array());
 
         $row = array();
         foreach ($rs as $c) {
-            $forumid = $c->forumid;
-            $forumname = $c->forumname;
-            $row += array("$forumid"=>"$forumname");
+            $id = $c->id;
+            $shortname = $c->shortname;
+            $row += array("$id"=>"$shortname");
+        }
+        $rs->close();
+
+        return $row;
+
+    }
+
+    public function get_course_enrol_methods($courseid) {
+
+        global $DB;
+
+        $rs = $DB->get_recordset_sql($this->get_course_enrol_methods_sql($courseid), array());
+
+        $row = array();
+        foreach ($rs as $c) {
+            $id = $c->id;
+            $enrol = $c->enrol;
+            $row += array("$id"=>"$enrol");
+        }
+        $rs->close();
+
+        return $row;
+
+    }
+
+    public function get_course_module_names($courseid) {
+
+        global $DB;
+
+        $rs = $DB->get_recordset_sql($this->get_course_module_names_sql($courseid), array());
+
+        $row = array();
+        foreach ($rs as $c) {
+            $id = $c->id;
+            $modulename = $c->modulename;
+            $row += array("$id"=>"$modulename");
         }
         $rs->close();
 

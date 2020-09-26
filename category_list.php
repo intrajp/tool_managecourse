@@ -79,7 +79,7 @@ function init() {
         // do something with num
         $.ajax({
             type: 'post',
-            url: 'get_course_forum.php',
+            url: 'get_course_info.php',
             data: {courseid:num},
         })
            .done( function (responseText) {           
