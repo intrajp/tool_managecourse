@@ -50,14 +50,32 @@ class intrajp_simple {
 
     }
 
+    private function get_course_basic_sql($courseid) {
+
+        $VIEW_COLUMNS = "co.fullname AS fullname, co.shortname AS shortname, co.idnumber AS idnumber, coc.name AS categoryname";
+        $FROM_TABLES = "FROM {course} co, {course_categories} coc";
+        $WHERE = "WHERE co.id = $courseid";
+        $CONDITION1 = "co.category = coc.id";
+        $DESC = "DESC";
+        $ASC = "ASC";
+        $ORDER_BY = "";
+        $LIMIT = "";
+
+        $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} ${WHERE} AND
+                ${CONDITION1} ${ORDER_BY} ${LIMIT}";
+
+        return $sql;
+
+    }
+
     private function get_course_role_assignments_sql($courseid) {
 
         $VIEW_COLUMNS = "ra.id as id, c.id as contextid, r.id as roleid, r.shortname";
         $FROM_TABLES = "FROM {role} r, {role_assignments} ra, {context} c, {course} co";
         $WHERE = "WHERE co.id = $courseid";
-	$CONDITION1 = "ra.roleid = r.id";
-	$CONDITION2 = "ra.contextid = c.id";
-	$CONDITION3 = "co.id = c.instanceid";
+        $CONDITION1 = "ra.roleid = r.id";
+        $CONDITION2 = "ra.contextid = c.id";
+        $CONDITION3 = "co.id = c.instanceid";
         $DESC = "DESC";
         $ASC = "ASC";
         $ORDER_BY = "ORDER BY id, roleid";
@@ -108,6 +126,31 @@ class intrajp_simple {
     }
 
 //// methods
+
+    public function get_course_basic($courseid) {
+
+        global $DB;
+
+        $rs = $DB->get_recordset_sql($this->get_course_basic_sql($courseid), array());
+
+        $row = array();
+        foreach ($rs as $c) {
+            $fullname = $c->fullname;
+            $shortname = $c->shortname;
+            $idnumber = $c->idnumber;
+            $categoryname = $c->categoryname;
+            $row += array(
+                "Full name" => "$shortname",
+                "Short name" => "$shortname",
+                "ID number" => "$idnumber",
+                "Category" => "$categoryname",
+            );
+        }
+        $rs->close();
+
+        return $row;
+
+    }
 
     public function get_course_role_assignments($courseid) {
 

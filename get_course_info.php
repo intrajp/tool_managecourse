@@ -51,6 +51,13 @@ $enrol_str = NULL;
 
 $courseid  = optional_param('courseid', $courseid, PARAM_INT);
 
+$rs_b = $simple->get_course_basic($courseid);
+
+foreach ($rs_b as $key=>$value) {
+    echo "$key: $value";
+    echo "\n";
+}
+
 $rs_ra = $simple->get_course_role_assignments($courseid);
 $role_assignments_str = NULL;
 
@@ -69,7 +76,7 @@ $enrol_str = NULL;
 foreach ($rs_e as $id => $enrol) {
     $enrol_str .= " ".$enrol;
 }
-echo "Enrolment methods:$enrol_str";
+echo "Enrolment methods: $enrol_str";
 echo "\n";
 
 $rs_m = $simple->get_course_module_names($courseid);
@@ -78,4 +85,4 @@ foreach ($rs_m as $id => $modulename) {
     $modulename_str .= " ".$modulename;
 }
 
-echo "Modules used:$modulename_str";
+echo "Modules used: $modulename_str";
