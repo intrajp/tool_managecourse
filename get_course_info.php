@@ -58,6 +58,13 @@ foreach($rs_b as $key=>$value) {
     echo "\n";
 }
 
+$rs_g = $simple->get_course_groupings($courseid);
+
+foreach($rs_g as $key=>$value) {
+    echo "$key: $value";
+    echo "\n";
+}
+
 $rs_g = $simple->get_course_groups($courseid);
 
 foreach($rs_g as $key=>$value) {

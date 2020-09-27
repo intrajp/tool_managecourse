@@ -68,6 +68,24 @@ class intrajp_simple {
 
     }
 
+    private function get_course_groupings_sql($courseid) {
+
+        $VIEW_COLUMNS = "count(courseid) as courseid_count";
+        $FROM_TABLES = "FROM {groupings}";
+        $WHERE = "WHERE courseid = $courseid";
+        $CONDITION1 = "";
+        $DESC = "DESC";
+        $ASC = "ASC";
+        $ORDER_BY = "";
+        $LIMIT = "";
+
+        $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} ${WHERE}
+                ${ORDER_BY} ${LIMIT}";
+
+        return $sql;
+
+    }
+
     private function get_course_groups_sql($courseid) {
 
         $VIEW_COLUMNS = "count(courseid) as courseid_count";
@@ -218,6 +236,25 @@ class intrajp_simple {
                 "Short name" => "$shortname",
                 "ID number" => "$idnumber",
                 "Category" => "$categoryname",
+            );
+        }
+        $rs->close();
+
+        return $row;
+
+    }
+
+    public function get_course_groupings($courseid) {
+
+        global $DB;
+
+        $rs = $DB->get_recordset_sql($this->get_course_groupings_sql($courseid), array());
+
+        $row = array();
+        foreach ($rs as $c) {
+            $courseid_count = $c->courseid_count;
+            $row += array(
+                "Groupings" => "$courseid_count",
             );
         }
         $rs->close();
