@@ -104,7 +104,6 @@ echo "Format: $format";
 echo "\n";
 
 if ($format) {
-    $name = NULL;
     $rs_s = $simple->get_course_sections($courseid);
     $count_s = count($rs_s);
     echo "Sections:";
@@ -120,7 +119,7 @@ if ($format) {
                             echo "Topic ".$i;
                         }
                     } else {
-                        echo "$name";
+                        echo "$value";
                     }
                     echo "\n";
                 }
