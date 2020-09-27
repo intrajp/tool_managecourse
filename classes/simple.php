@@ -232,7 +232,7 @@ class intrajp_simple {
             $idnumber = $c->idnumber;
             $categoryname = $c->categoryname;
             $row += array(
-                "Full name" => "$shortname",
+                "Full name" => "$fullname",
                 "Short name" => "$shortname",
                 "ID number" => "$idnumber",
                 "Category" => "$categoryname",
