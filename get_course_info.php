@@ -58,6 +58,13 @@ foreach($rs_b as $key=>$value) {
     echo "\n";
 }
 
+$rs_g = $simple->get_course_groups($courseid);
+
+foreach($rs_g as $key=>$value) {
+    echo "$key: $value";
+    echo "\n";
+}
+
 $rs_ra = $simple->get_course_role_assignments($courseid);
 $role_assignments_str = NULL;
 
