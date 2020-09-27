@@ -53,7 +53,7 @@ $courseid  = optional_param('courseid', $courseid, PARAM_INT);
 
 $rs_b = $simple->get_course_basic($courseid);
 
-foreach ($rs_b as $key=>$value) {
+foreach($rs_b as $key=>$value) {
     echo "$key: $value";
     echo "\n";
 }
@@ -66,22 +66,85 @@ $keys = array_keys($occurences);
 $counted = count($keys);
 
 echo "Role assignments:";
-for ($i = 0; $i < $counted; $i++){
+for($i = 0; $i < $counted; $i++){
     echo " ".$keys[$i]." ".$occurences[$keys[$i]];
 }
 echo "\n";
 
 $rs_e = $simple->get_course_enrol_methods($courseid);
 $enrol_str = NULL;
-foreach ($rs_e as $id => $enrol) {
+foreach($rs_e as $id => $enrol) {
     $enrol_str .= " ".$enrol;
 }
 echo "Enrolment methods: $enrol_str";
 echo "\n";
 
+$rs_f = $simple->get_course_format($courseid);
+$format = NULL;
+foreach($rs_f as $key => $value) {
+    $format = $value;
+    if ($format == "singleactivity") {
+        $format = "Single activity format";
+    } else if ($format == "social") {
+        $format = "Social format";
+    } else if ($format == "topics") {
+        $format = "Topics format";
+    } else if ($format == "weeks") {
+        $format = "Weekly format";
+    }
+}
+echo "Format: $format";
+echo "\n";
+
+if ($format) {
+    $rs_s = $simple->get_course_sections($courseid);
+    $count_s = count($rs_s);
+    echo "Sections:";
+    echo "\n";
+    for($i=0; $i<$count_s; $i++){
+        foreach($rs_s[$i] as $key => $value) {
+            if ($format == "Topics format") {
+                if ($key == "name") {
+                    if ($value == "") {
+                        if ($i == 0) {
+                            echo "General";
+                        } else {
+                            echo "Topic ".$i;
+                        }
+                    } else {
+                        echo "$name";
+                    }
+                    echo "\n";
+                }
+            } else if ($format == "Weekly format") {
+                if ($key == "name") {
+                    if ($value == "") {
+                        if ($i == 0) {
+                            echo "General";
+                        } else {
+                            // change it to MM/DD - MM/DD 
+                            $rs_w = $simple->get_course_weeks($courseid, $i);
+                            foreach($rs_w as $key => $value) {
+                                if ($key == "weekstart") {
+                                    echo gmdate("m/d", $value + date("Z"))." - ";
+                                } else if ($key == "weekend") {
+                                    echo gmdate("m/d", $value + date("Z"));
+                                }
+                            }
+                        }
+                    } else {
+                        echo "$name";
+                    }
+                    echo "\n";
+                }
+            }
+        }
+    }
+}
+
 $rs_m = $simple->get_course_module_names($courseid);
 $rs_m = array_unique($rs_m);
-foreach ($rs_m as $id => $modulename) {
+foreach($rs_m as $id => $modulename) {
     $modulename_str .= " ".$modulename;
 }
 

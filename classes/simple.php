@@ -106,6 +106,62 @@ class intrajp_simple {
 
     }
 
+    private function get_course_format_sql($courseid) {
+
+        $VIEW_COLUMNS = "co.format";
+        $FROM_TABLES = "FROM {course} co";
+        $WHERE = "WHERE co.id = $courseid";
+        $CONDITION1 = "";
+        $DESC = "DESC";
+        $ASC = "ASC";
+        $ORDER_BY = "";
+        $LIMIT = "";
+
+        $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} ${WHERE}
+                ${ORDER_BY} ${LIMIT}";
+
+        return $sql;
+
+    }
+
+    private function get_course_sections_sql($courseid) {
+
+        $VIEW_COLUMNS = "cos.id, cos.section, cos.name";
+        $FROM_TABLES = "FROM {course_sections} cos";
+        $WHERE = "WHERE cos.course = $courseid";
+        $CONDITION1 = "";
+        $DESC = "DESC";
+        $ASC = "ASC";
+        $ORDER_BY = "ORDER BY cos.id";
+        $LIMIT = "";
+
+        $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} ${WHERE}
+                ${ORDER_BY} ${LIMIT}";
+
+        return $sql;
+
+    }
+
+    private function get_course_weeks_sql($courseid, $cnt) {
+
+        global $CFG;
+        $one_week = (($cnt - 1 ) * 7) * 86400;
+        $VIEW_COLUMNS="co.startdate + $one_week AS startdate";
+        $FROM_TABLES = "FROM {course} co";
+        $WHERE = "WHERE co.id = $courseid";
+        $CONDITION1 = "";
+        $DESC = "DESC";
+        $ASC = "ASC";
+        $ORDER_BY = "";
+        $LIMIT = "";
+
+        $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} ${WHERE}
+                ${ORDER_BY} ${LIMIT}";
+
+        return $sql;
+
+    }
+
     private function get_course_module_names_sql($courseid) {
 
         $VIEW_COLUMNS = "DISTINCT cm.id AS id, m.name AS modulename";
@@ -181,6 +237,59 @@ class intrajp_simple {
             $id = $c->id;
             $enrol = $c->enrol;
             $row += array("$id"=>"$enrol");
+        }
+        $rs->close();
+
+        return $row;
+
+    }
+
+    public function get_course_format($courseid) {
+
+        global $DB;
+
+        $rs = $DB->get_recordset_sql($this->get_course_format_sql($courseid), array());
+
+        $row = array();
+        foreach ($rs as $c) {
+            $format = $c->format;
+            $row += array("format"=>"$format");
+        }
+        $rs->close();
+
+        return $row;
+
+    }
+
+    public function get_course_sections($courseid) {
+
+        global $DB;
+
+        $rs = $DB->get_recordset_sql($this->get_course_sections_sql($courseid), array());
+
+        $row = array();
+        foreach ($rs as $c) {
+            $row[] = array("id"=>$c->id,"section"=>$c->section,"name"=>$c->name);
+        }
+        $rs->close();
+
+        return $row;
+
+    }
+
+    public function get_course_weeks($courseid, $cnt) {
+
+        global $DB;
+
+        $rs = $DB->get_recordset_sql($this->get_course_weeks_sql($courseid, $cnt), array());
+
+        $startdate = NULL;
+
+        $row = array();
+        foreach ($rs as $c) {
+            $startdate = $c->startdate;
+            $weekend = $startdate + (86400 * 6);
+            $row += array("weekstart"=>"$startdate", "weekend"=>"$weekend");
         }
         $rs->close();
 
