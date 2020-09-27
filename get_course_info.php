@@ -104,6 +104,7 @@ echo "Format: $format";
 echo "\n";
 
 if ($format) {
+    $name = NULL;
     $rs_s = $simple->get_course_sections($courseid);
     $count_s = count($rs_s);
     echo "Sections:";
