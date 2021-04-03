@@ -148,33 +148,22 @@ class tool_managecourse_renderer extends plugin_renderer_base {
 
     private function show_table3_sql($component, $contextlevel) {
 
-        // Alert, first column should be unique with get_records_sql.
-        $VIEW_COLUMNS = "DISTINCT x.instanceid, f.component, x.contextlevel, u.firstname,
-                             u.lastname, c.fullname, c.shortname, f.timecreated, f.timemodified,
-                             sum(f.filesize) as size_in_bytes, sum(f.filesize/1024) as size_in_kbytes,
-                             sum(f.filesize/1048576) as size_in_mbytes, 
-                             sum(f.filesize/1073741824) as size_in_gbytes,
-                             sum(case when (f.filesize > 0) then 1 else 0 end) as number_of_files";
-        $FROM_TABLES = "FROM {files} f, {course} c, {context} x, {user} u";
-        $BIND1 = "f.contextid = x.id";
-        $BIND2 = "c.id = x.instanceid";
-        $BIND3 = "u.id = f.userid";
-        $GROUP_BY = "GROUP BY f.contextid, x.instanceid, f.component, x.contextlevel, u.firstname,
-                     u.lastname, c.fullname, c.shortname, u.firstname, u.lastname, c.fullname,
-                     c.shortname, f.timecreated, f.timemodified";
-        $ORDER_FILESIZE = "sum(f.filesize)";
-        $ORDER_TIMECREATED = "f.timecreated";
-        $ORDER_MODIFIED = "f.timemodified";
+        $VIEW_COLUMNS = "c.id AS courseid, c.shortname AS shortname, SUM(f.filesize)/1024 AS size_in_kbytes";
+        $FROM_TABLES = "FROM {files} f, {course} c, {context} ctx, {user} u, {course_modules} cm";
+        $BIND1 = "f.contextid = ctx.id";
+        $BIND2 = "cm.id = ctx.instanceid";
+        $BIND3 = "c.id = cm.course";
+        $GROUP_BY = "GROUP BY c.id";
+        $ORDER_FILESIZE = "sum(f.filesize)/1024";
         $DESC = "DESC";
         $ASC = "ASC";
         $FORMAT_NORMAL = ";";
         $FORMAT_ROW = "\G";
-        //Uncomment if you want to echo date string  
         $FORMAT = $FORMAT_NORMAL;
-        //sql (you can tweek order with above variable)
-        $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} WHERE ${BIND1} AND ${component}
-                    AND ${contextlevel} AND ${BIND2} AND ${BIND3} ${GROUP_BY} 
-                    ORDER BY ${ORDER_FILESIZE} ${DESC}, ${ORDER_TIMECREATED} ${DESC}";
+
+        $sql = "SELECT ${VIEW_COLUMNS} ${FROM_TABLES} WHERE ${BIND1} AND ${BIND2}
+                    AND ${BIND3} ${GROUP_BY} 
+                    ORDER BY ${ORDER_FILESIZE} ${DESC}";
 
         return $sql;
 
@@ -466,11 +455,9 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         $data = array();
         $table = new html_table();
         $table->head = [
-            get_string('fullname', 'tool_managecourse'),
-            get_string('sizeinkbytes', 'tool_managecourse'),
-            get_string('sizeinmbytes', 'tool_managecourse'),
-            get_string('firstname', 'tool_managecourse'),
-            get_string('lastname', 'tool_managecourse'),
+            get_string('courseid', 'tool_managecourse'),
+            get_string('shortname', 'tool_managecourse'),
+	    get_string('sizeinkbytes', 'tool_managecourse'),
         ];
         $table->id = 'courses3';
         $table->attributes['class'] = 'admintable generaltable';
@@ -480,11 +467,9 @@ class tool_managecourse_renderer extends plugin_renderer_base {
                   array(), $page*$perpage, $perpage);
         foreach ($rs as $c) {
             $row = array();
-            $row[] = $c->fullname;
+            $row[] = $c->courseid;
+            $row[] = $c->shortname;
             $row[] = $c->size_in_kbytes;
-            $row[] = $c->size_in_mbytes;
-            $row[] = $c->firstname;
-            $row[] = $c->lastname;
 
             $table->data[] = $row;
         }
