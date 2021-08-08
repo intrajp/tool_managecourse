@@ -148,7 +148,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
 
     private function show_table3_sql($component, $contextlevel) {
 
-        $VIEW_COLUMNS = "c.id AS courseid, c.shortname AS shortname, SUM(f.filesize)/1024 AS size_in_kbytes";
+        $VIEW_COLUMNS = "c.id AS courseid, c.shortname AS shortname, ROUND(SUM(f.filesize)/1024,1) AS size_in_kbytes";
         $FROM_TABLES = "FROM {files} f, {course} c, {context} ctx, {course_modules} cm";
         $BIND1 = "f.contextid = ctx.id";
         $BIND2 = "cm.id = ctx.instanceid";
