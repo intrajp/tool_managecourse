@@ -148,7 +148,13 @@ class tool_managecourse_renderer extends plugin_renderer_base {
 
     private function show_table3_sql($component, $contextlevel) {
 
-        $VIEW_COLUMNS = "c.id AS courseid, c.shortname AS shortname, ROUND(SUM(f.filesize)/1024,1) AS size_in_kbytes";
+        global $CFG;
+
+        if ($CFG->dbtype == 'pgsql') {
+            $VIEW_COLUMNS = "c.id AS courseid, c.shortname AS shortname, to_char(SUM(f.filesize)/1024,'fm999,999,999,999') AS size_in_kbytes";
+        } else {
+            $VIEW_COLUMNS = "c.id AS courseid, c.shortname AS shortname, format(SUM(f.filesize)/1024,1) AS size_in_kbytes";
+        }
         $FROM_TABLES = "FROM {files} f, {course} c, {context} ctx, {course_modules} cm";
         $BIND1 = "f.contextid = ctx.id";
         $BIND2 = "cm.id = ctx.instanceid";
@@ -166,7 +172,6 @@ class tool_managecourse_renderer extends plugin_renderer_base {
                     ORDER BY ${ORDER_FILESIZE} ${DESC}";
 
         return $sql;
-
     }
 
     private function grade_sql($userid, $categoryid, $courseid) {
@@ -210,7 +215,7 @@ class tool_managecourse_renderer extends plugin_renderer_base {
         if ($courseid) {
             $CONDITION3 = "AND c.id = $courseid";
         }
-	$CONDITION4 = "AND g.finalgrade >= 0";
+        $CONDITION4 = "AND g.finalgrade >= 0";
 
         $GROUP_BY="GROUP BY m.id, u.id, e.id, c.id, k.name, r.shortname,
                    c.fullname, c.startdate, c.enddate, g.finalgrade, g.rawgrademax";
